@@ -22,7 +22,7 @@ import { Route, Switch } from "react-router-dom";
 import AuthNavbar from "components/Navbars/AuthNavbar.jsx";
 import AuthFooter from "components/Footers/AuthFooter.jsx";
 
-import routes from "routes.js";
+import routesAll from "routesAll.js";
 
 class Auth extends React.Component {
   componentDidMount() {
@@ -61,7 +61,7 @@ class Auth extends React.Component {
       <>
         <div className="main-content" ref="mainContent">
           <AuthNavbar />
-          <Switch>{this.getRoutes(routes)}</Switch>
+          <Switch>{this.getRoutes(routesAll)}</Switch>
         </div>
         <AuthFooter />
       </>

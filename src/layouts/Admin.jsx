@@ -22,11 +22,13 @@ import AdminNavbar from "components/Navbars/AdminNavbar.jsx";
 import AdminFooter from "components/Footers/AdminFooter.jsx";
 import Sidebar from "components/Sidebar/Sidebar.jsx";
 
+
 import routes from "routes.js";
+import routesAll from "routesAll.js";
 
 class Admin extends React.Component {
   state = {
-    sidenavOpen: true
+    sidenavOpen: true    
   };
   componentDidUpdate(e) {
     if (e.history.pathname !== e.location.pathname) {
@@ -43,6 +45,7 @@ class Admin extends React.Component {
       if (prop.layout === "/admin") {
         return (
           <Route
+            exact
             path={prop.layout + prop.path}
             component={prop.component}
             key={key}
@@ -95,7 +98,7 @@ class Admin extends React.Component {
           sidenavOpen={this.state.sidenavOpen}
           logo={{
             innerLink: "/",
-            imgSrc: require("assets/img/brand/argon-react.png"),
+            imgSrc: require("assets/img/brand/logo-wigoo.png"),
             imgAlt: "..."
           }}
         />
@@ -111,7 +114,7 @@ class Admin extends React.Component {
             sidenavOpen={this.state.sidenavOpen}
             brandText={this.getBrandText(this.props.location.pathname)}
           />
-          <Switch>{this.getRoutes(routes)}</Switch>
+          <Switch>{this.getRoutes(routesAll)}</Switch>
           <AdminFooter />
         </div>
         {this.state.sidenavOpen ? (

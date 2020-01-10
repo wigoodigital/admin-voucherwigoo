@@ -17,6 +17,8 @@
 import React from "react";
 // nodejs library to set properties for components
 import PropTypes from "prop-types";
+// react library for routing
+import { Link } from "react-router-dom";
 // reactstrap components
 import {
   Breadcrumb,
@@ -28,6 +30,40 @@ import {
 } from "reactstrap";
 
 class TimelineHeader extends React.Component {
+
+
+  parentRender = parent => {
+    
+    if (parent !== "") {
+      return (
+        <BreadcrumbItem>
+          <a href="#pablo" onClick={e => e.preventDefault()}>
+            {parent}
+          </a>
+        </BreadcrumbItem>
+      );
+    } else {
+      return null;
+    }
+    
+  };
+  
+  btnNewRender = parent => {
+    
+    if (parent !== "") {
+      return (
+        <BreadcrumbItem>
+          <a href="#pablo" onClick={e => e.preventDefault()}>
+            {parent}
+          </a>
+        </BreadcrumbItem>
+      );
+    } else {
+      return null;
+    }
+    
+  };
+
   render() {
     return (
       <>
@@ -48,22 +84,18 @@ class TimelineHeader extends React.Component {
                         <i className="fas fa-home" />
                       </a>
                     </BreadcrumbItem>
-                    <BreadcrumbItem>
-                      <a href="#pablo" onClick={e => e.preventDefault()}>
-                        {this.props.parentName}
-                      </a>
-                    </BreadcrumbItem>
+                    {this.parentRender(this.props.parentName)}
                     <BreadcrumbItem aria-current="page" className="active">
                       {this.props.name}
                     </BreadcrumbItem>
                   </Breadcrumb>
                 </Col>
                 <Col className="mt-3 mt-md-0 text-md-right" lg="6" xs="5">
+                  <Button className="btn-neutral" color="default" size="sm" to="/admin/clientes/add" tag={Link}>
+                    Novo
+                  </Button>                
                   <Button className="btn-neutral" color="default" size="sm">
-                    New
-                  </Button>
-                  <Button className="btn-neutral" color="default" size="sm">
-                    Filters
+                    Filtros
                   </Button>
                 </Col>
               </Row>
@@ -77,7 +109,8 @@ class TimelineHeader extends React.Component {
 
 TimelineHeader.propTypes = {
   name: PropTypes.string,
-  parentName: PropTypes.string
+  parentName: PropTypes.string,
+  listView: PropTypes.bool
 };
 
 export default TimelineHeader;

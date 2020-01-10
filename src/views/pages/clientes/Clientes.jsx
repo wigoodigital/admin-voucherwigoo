@@ -39,6 +39,8 @@ import SimpleHeader from "components/Headers/SimpleHeader.jsx";
 
 import { dataTable } from "variables/general";
 
+import api from "services/api";
+
 const pagination = paginationFactory({
   page: 1,
   alwaysShowAllBtns: true,
@@ -67,12 +69,67 @@ const pagination = paginationFactory({
   )
 });
 
+
+const selectRow = {
+  mode: 'checkbox',
+  clickToSelect: true,
+  clickToExpand: true
+};
+
+const expandRow = {
+  showExpandColumn: true,
+  renderer: row => (
+    <div>
+      <p>{ `This Expand row is belong to rowKey ${row}` }</p>
+      <p>You can render anything here, also you can add additional data on every row object</p>
+      <p>expandRow.renderer callback will pass the origin row object to you</p>
+    </div>
+  )
+};
+
 const { SearchBar } = Search;
+
+const BtExportCSV = (props) => {
+  const handleClick = () => {
+    props.onExport();
+  };
+  return (
+    <>         
+      <Button
+          className="buttons-copy buttons-html5"
+          color="default"
+          size="sm"
+          id="csv-tooltip"
+          onClick={
+            handleClick
+          }
+        >
+          <span>Export</span>
+      </Button>   
+    </> 
+  );
+};
 
 class ReactBSTables extends React.Component {
   state = {
-    alert: null
+    alert: null,
+    tableData: []
   };
+
+  //get data from API
+  componentDidMount(){
+    this.loadData();
+  }
+
+  loadData = async () => {
+    const response = await api.get("/account");
+    this.setState({
+      tableData: response.data
+    })
+    console.log(response.data);
+  }
+  
+
   // this function will copy to clipboard an entire table,
   // so you can paste it inside an excel or csv file
   copyToClipboardAsTable = el => {
@@ -129,6 +186,13 @@ class ReactBSTables extends React.Component {
                     react-bootstrap-table2 plugin. This is a minimal setup in
                     order to get started fast.
                   </p>
+                  <p>
+                    {this.state.tableData.length}
+                  </p>
+                  {this.state.tableData.map(item => (
+                    <h2 key={item._id}>{item.name}<br/>{item.email}</h2>
+                  ))}
+                  
                 </CardHeader>
                 <ToolkitProvider
                   data={dataTable}
@@ -166,6 +230,7 @@ class ReactBSTables extends React.Component {
                     }
                   ]}
                   search
+                  exportCSV
                 >
                   {props => (
                     <div className="py-4 table-responsive">
@@ -199,6 +264,8 @@ class ReactBSTables extends React.Component {
                                 )}
                                 content={() => this.componentRef}
                               />
+                                                            
+                              <BtExportCSV { ...props.csvProps } />                          
                             </ButtonGroup>
                             <UncontrolledTooltip
                               placement="top"
@@ -210,6 +277,13 @@ class ReactBSTables extends React.Component {
                             <UncontrolledTooltip
                               placement="top"
                               target="copy-tooltip"
+                            >
+                              This will copy to your clipboard the visible rows
+                              of the table.
+                            </UncontrolledTooltip>
+                            <UncontrolledTooltip
+                              placement="top"
+                              target="csv-tooltip"
                             >
                               This will copy to your clipboard the visible rows
                               of the table.
@@ -235,10 +309,13 @@ class ReactBSTables extends React.Component {
                       <BootstrapTable
                         ref={el => (this.componentRef = el)}
                         {...props.baseProps}
+                        keyField='name'
+                        id="react-bs-table"
                         bootstrap4={true}
                         pagination={pagination}
                         bordered={false}
-                        id="react-bs-table"
+                        selectRow={ selectRow }                        
+                        expandRow={ expandRow }
                       />
                     </div>
                   )}

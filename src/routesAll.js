@@ -42,10 +42,11 @@ import Widgets from "views/pages/Widgets.jsx";
 
 //Sidebar Options
 import Clientes from "views/pages/clientes/Clientes.jsx";
-import AddClientes from "views/pages/clientes/AddClientes.jsx";
+import DetailClientes from "views/pages/clientes/DetailClientes.jsx";
 import Usuarios from "views/pages/administrador/usuarios/Usuarios.jsx";
 import Bases from "views/pages/administrador/bases/Bases.jsx";
 import Cupons from "views/pages/campanhas/cupons/Cupons.jsx";
+import DetailCupons from "views/pages/campanhas/cupons/DetailCupons.jsx";
 import Eventos from "views/pages/campanhas/eventos/Eventos.jsx";
 import Inicio from "views/pages/overview/Inicio.jsx";
 import Campanhas from "views/pages/overview/Campanhas.jsx";
@@ -320,6 +321,20 @@ const routes = [
         layout: "/admin"
       },
       {
+        path: "/campanhas/cupons/add",
+        name: "Adicionar Cupons",
+        icon: "ni ni-archive-2 text-green",
+        component: DetailCupons,
+        layout: "/admin"
+      },
+      {
+        path: "/campanhas/cupons/edit",
+        name: "Editar Cupons",
+        icon: "ni ni-archive-2 text-green",
+        component: DetailCupons,
+        layout: "/admin"
+      },
+      {
         path: "/campanhas/eventos",
         name: "Eventos",
         component: Eventos,
@@ -339,7 +354,14 @@ const routes = [
     path: "/clientes/add",
     name: "Adicionar Clientes",
     icon: "ni ni-archive-2 text-green",
-    component: AddClientes,
+    component: DetailClientes,
+    layout: "/admin"
+  },
+  {
+    path: "/clientes/edit",
+    name: "Editar Clientes",
+    icon: "ni ni-archive-2 text-green",
+    component: DetailClientes,
     layout: "/admin"
   },
   // Clientes - End

@@ -17,16 +17,16 @@
 import React from "react";
 
 // reactstrap components
-import { Button, Container, Row, Col } from "reactstrap";
+import { Container, Row, Col } from "reactstrap";
 
 class ProfileHeader extends React.Component {
   render() {
     return (
       <>
         <div
-          className="header pb-6 d-flex align-items-center"
+          className="header pt-6 pb-6 d-flex align-items-center"
           style={{
-            minHeight: "500px",
+            minHeight: "250px",
             backgroundImage:
               'url("' + require("assets/img/theme/profile-cover.jpg") + '")',
             backgroundSize: "cover",
@@ -42,15 +42,7 @@ class ProfileHeader extends React.Component {
                 <p className="text-white mt-0 mb-5">
                   This is your profile page. You can see the progress you've
                   made with your work and manage your projects or assigned tasks
-                </p>
-                <Button
-                  className="btn-neutral"
-                  color="default"
-                  href="#pablo"
-                  onClick={e => e.preventDefault()}
-                >
-                  Edit profile
-                </Button>
+                </p>                
               </Col>
             </Row>
           </Container>

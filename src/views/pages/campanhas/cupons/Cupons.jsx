@@ -35,7 +35,7 @@ import {
   UncontrolledTooltip
 } from "reactstrap";
 // core components
-import SimpleHeader from "components/Headers/SimpleHeader.jsx";
+import DatatableHeader from "components/Headers/DatatableHeader.jsx";
 
 import { dataTable } from "variables/general";
 
@@ -117,7 +117,7 @@ class ReactBSTables extends React.Component {
     return (
       <>
         {this.state.alert}
-        <SimpleHeader name="Cupons" parentName="Campanhas" />
+        <DatatableHeader name="Cupons" parentName="Campanhas" pathNew="/admin/campanhas/cupons/add" />
         <Container className="mt--6" fluid>
           <Row>
             <div className="col">              

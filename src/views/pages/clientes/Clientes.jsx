@@ -17,6 +17,8 @@
 import React from "react";
 // react plugin that prints a given react component
 import ReactToPrint from "react-to-print";
+// react library for routing
+import { Link } from "react-router-dom";
 // react component for creating dynamic tables
 import BootstrapTable from "react-bootstrap-table-next";
 import paginationFactory from "react-bootstrap-table2-paginator";
@@ -35,7 +37,7 @@ import {
   UncontrolledTooltip
 } from "reactstrap";
 // core components
-import SimpleHeader from "components/Headers/SimpleHeader.jsx";
+import DatatableHeader from "components/Headers/DatatableHeader.jsx";
 
 import { dataTable } from "variables/general";
 
@@ -128,6 +130,26 @@ class ReactBSTables extends React.Component {
     })
     console.log(response.data);
   }
+
+
+  rankFormatter = (cell, row, rowIndex, formatExtraData) => {
+    return (
+      <>
+        <i className={ formatExtraData[cell] } />
+        <Button
+            className="buttons-copy buttons-html5"
+            color="default"
+            size="sm"
+            id="csv-tooltip"   
+            to="/admin/clientes/add" 
+            tag={Link}         
+          >
+            <span>Edit</span>
+        </Button>  
+      </>
+
+    );
+  }
   
 
   // this function will copy to clipboard an entire table,
@@ -174,7 +196,7 @@ class ReactBSTables extends React.Component {
     return (
       <>
         {this.state.alert}
-        <SimpleHeader name="Clientes" parentName="" />
+        <DatatableHeader name="Clientes" parentName="" pathNew="/admin/clientes/add"/>
         <Container className="mt--6" fluid>
           <Row>
             <div className="col">
@@ -214,9 +236,14 @@ class ReactBSTables extends React.Component {
                       sort: true
                     },
                     {
-                      dataField: "Age",
-                      text: "age",
-                      sort: true
+                      dataField: "age",
+                      text: "Age",
+                      sort: true,
+                      formatter: this.rankFormatter,
+                      formatExtraData: {
+                        61: 'ni ni-air-baloon',
+                        63: 'ni ni-active-40'
+                      }
                     },
                     {
                       dataField: "start_date",

@@ -18,7 +18,7 @@ import React from "react";
 // react plugin that prints a given react component
 import ReactToPrint from "react-to-print";
 // react library for routing
-import { Link } from "react-router-dom";
+// import { Link } from "react-router-dom";
 // react component for creating dynamic tables
 import BootstrapTable from "react-bootstrap-table-next";
 import paginationFactory from "react-bootstrap-table2-paginator";
@@ -40,7 +40,6 @@ import {
 // core components
 import DatatableHeader from "components/Headers/DatatableHeader.jsx";
 import DetailClientes from "views/pages/clientes/DetailClientes.jsx";
-
 
 
 import api from "services/api";
@@ -148,14 +147,14 @@ class ReactBSTables extends React.Component {
             color="default"
             size="sm"
             id="csv-tooltip"   
-            to={`/admin/clientes/edit/${row.link}`} 
+            // to={`/admin/clientes/edit/${row.link}`} 
             // to="/admin/clientes/edit"
-            tag={Link}    
-            // onClick={() => {
-            //     this.toggleModal("exampleModal")
-            //     this.setState({idSelected: row._id})
-            //   }
-            // }     
+            // tag={Link}    
+            onClick={() => {
+                this.toggleModal("exampleModal")
+                this.setState({idSelected: row._id})
+              }
+            }     
           >
             <span>Edit</span>
         </Button>  
@@ -211,68 +210,11 @@ class ReactBSTables extends React.Component {
       )
     });
   };
-
-
-  hideAlert = () => {
-    this.setState({
-      sweetAlert: null
-    });
-  };
-
-  confirmAlert = () => {
-    this.setState({
-      sweetAlert: (
-        <ReactBSAlert
-          warning
-          style={{ display: "block", marginTop: "-100px"}}
-          title="Are you sure?"
-          onConfirm={() => this.hideAlert()}
-          onCancel={() => this.confirmedAlert()}
-          showCancel
-          confirmBtnBsStyle="default"
-          confirmBtnText="Cancel"
-          cancelBtnBsStyle="danger"
-          cancelBtnText="Yes, delete it!"
-          btnSize=""
-        >
-          You won't be able to revert this!
-        </ReactBSAlert>
-      )
-    });
-  };
-  confirmedAlert = () => {
-    // Update data 
-    this.putData(this.state.account);
-
-    this.setState({
-      sweetAlert: (
-        <ReactBSAlert
-          success
-          style={{ display: "block", marginTop: "-100px" }}
-          title="Deleted!"
-          onConfirm={() => this.hideAlert()}
-          onCancel={() => this.hideAlert()}
-          confirmBtnBsStyle="primary"
-          confirmBtnText="Ok"
-          btnSize=""
-        >
-          Your file has been deleted.
-        </ReactBSAlert>
-      )
-    });
-  };
-
-
   render() {
     return (
       <>
 
         {this.state.alert}        
-        {this.state.sweetAlert}      
-
-        <Button color="primary" type="button" onClick={this.confirmAlert}>
-          Save changes
-        </Button>  
 
         <Modal
           className="modal-dialog-centered modal-sideview"
@@ -334,8 +276,29 @@ class ReactBSTables extends React.Component {
                       formatExtraData: {
                         condicao1: 'ni ni-air-baloon',
                         condicao2: 'ni ni-active-40'
-                      }
+                      },
+                      // events: {
+                      //   onClick: (e, column, columnIndex, row, rowIndex) => {
+                      //     console.log(e);
+                      //     console.log(column);
+                      //     console.log(columnIndex);
+                      //     console.log(row);
+                      //     console.log(rowIndex);
+                      //     alert('Click on Product ID field');                        
+                      //   }
+                      // }
                     }
+                    // },
+                    // {
+                    //   dataField: "start_date",
+                    //   text: "Start date",
+                    //   sort: true
+                    // },
+                    // {
+                    //   dataField: "salary",
+                    //   text: "Salary",
+                    //   sort: true
+                    // }
                   ]}
                   search
                   exportCSV

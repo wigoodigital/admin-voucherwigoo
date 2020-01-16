@@ -358,7 +358,7 @@ const routes = [
     layout: "/admin"
   },
   {
-    path: "/clientes/edit",
+    path: "/clientes/edit/:id",
     name: "Editar Clientes",
     icon: "ni ni-archive-2 text-green",
     component: DetailClientes,

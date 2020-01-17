@@ -351,15 +351,15 @@ const routes = [
     layout: "/admin"
   },
   {
-    path: "/clientes/add",
-    name: "Adicionar Clientes",
+    path: "/clientes/:action",
+    name: "Novo Cliente",
     icon: "ni ni-archive-2 text-green",
     component: DetailClientes,
     layout: "/admin"
   },
   {
-    path: "/clientes/edit/:id",
-    name: "Editar Clientes",
+    path: "/clientes/:action/:id",
+    name: "Editar Cliente",
     icon: "ni ni-archive-2 text-green",
     component: DetailClientes,
     layout: "/admin"

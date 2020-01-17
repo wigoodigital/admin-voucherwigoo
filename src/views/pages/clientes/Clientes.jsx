@@ -148,7 +148,7 @@ class ReactBSTables extends React.Component {
             color="default"
             size="sm"
             id="csv-tooltip"   
-            to={`/admin/clientes/edit/${row.link}`} 
+            to={`/admin/clientes/edit/${row._id}`} 
             // to="/admin/clientes/edit"
             tag={Link}    
             // onClick={() => {
@@ -270,10 +270,6 @@ class ReactBSTables extends React.Component {
         {this.state.alert}        
         {this.state.sweetAlert}      
 
-        <Button color="primary" type="button" onClick={this.confirmAlert}>
-          Save changes
-        </Button>  
-
         <Modal
           className="modal-dialog-centered modal-sideview"
           isOpen={this.state.exampleModal}
@@ -322,8 +318,8 @@ class ReactBSTables extends React.Component {
                       sort: true
                     },
                     {
-                      dataField: "link",
-                      text: "Link",
+                      dataField: "utm",
+                      text: "URL",
                       sort: true
                     },
                     {

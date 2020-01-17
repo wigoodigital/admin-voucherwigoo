@@ -18,12 +18,11 @@ import React from "react";
 // nodejs library to set properties for components
 import PropTypes from "prop-types";
 // react library for routing
-// import { Link } from "react-router-dom";
+import { Link } from "react-router-dom";
 // reactstrap components
-import {
-  Breadcrumb,
+import {  
   BreadcrumbItem,
-  // Button,
+  Button,
   Container,
   Row,
   Col
@@ -72,32 +71,22 @@ class TimelineHeader extends React.Component {
             <div className="header-body">
               <Row className="align-items-center py-4">
                 <Col lg="6" xs="7">
-                  <h6 className="fullcalendar-title h2 text-white d-inline-block mb-0">
-                    {this.props.name}
-                  </h6>{" "}
-                  <Breadcrumb
-                    className="d-none d-md-inline-block ml-lg-4"
-                    listClassName="breadcrumb-links breadcrumb-dark"
+                  <Button 
+                    className="btn-icon btn-2 btn-back" 
+                    color="info" 
+                    type="button"
+                    to={this.props.parentPath}                     
+                    tag={Link}    
                   >
-                    <BreadcrumbItem>
-                      <a href="#pablo" onClick={e => e.preventDefault()}>
-                        <i className="fas fa-home" />
-                      </a>
-                    </BreadcrumbItem>
-                    {this.parentRender(this.props.parentName)}
-                    <BreadcrumbItem aria-current="page" className="active">
-                      {this.props.name}
-                    </BreadcrumbItem>
-                  </Breadcrumb>
-                </Col>
-                {/* <Col className="mt-3 mt-md-0 text-md-right" lg="6" xs="5">
-                  <Button className="btn-neutral" color="default" size="sm" to="/admin/clientes/add" tag={Link}>
-                    Novo
-                  </Button>                
-                  <Button className="btn-neutral" color="default" size="sm">
-                    Filtros
-                  </Button>
-                </Col> */}
+                    <span className="btn-inner--icon">
+                      <i className="fas fa-arrow-left"></i>
+                    </span>
+                  </Button><br/>
+                  <h6 className="fullcalendar-title h2 text-white d-inline-block mb-0">
+                    {`${this.props.parentName} -  ${this.props.name}`}
+                  </h6>{" "}
+                  
+                </Col>              
               </Row>
             </div>
           </Container>

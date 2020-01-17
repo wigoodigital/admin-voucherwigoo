@@ -23,6 +23,8 @@ var y = today.getFullYear();
 var m = today.getMonth();
 var d = today.getDate();
 
+const BASE_URL = "https://voucherwigoo.com.br"
+
 const events = [
   {
     id: 1,
@@ -650,4 +652,4 @@ const dataTable = [
   }
 ];
 
-export { events, widgetEvents, dataTable };
+export { events, widgetEvents, dataTable, BASE_URL };

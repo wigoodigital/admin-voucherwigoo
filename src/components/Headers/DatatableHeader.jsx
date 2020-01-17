@@ -94,9 +94,9 @@ class TimelineHeader extends React.Component {
                   <Button className="btn-neutral" color="default" size="sm" to={this.props.pathNew} tag={Link}>
                     Novo
                   </Button>                
-                  <Button className="btn-neutral" color="default" size="sm">
+                  {/* <Button className="btn-neutral" color="default" size="sm">
                     Filtros
-                  </Button>
+                  </Button> */}
                 </Col>
               </Row>
             </div>

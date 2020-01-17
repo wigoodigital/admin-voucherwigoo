@@ -6,13 +6,15 @@
     position: relative;
 
     img {
-        max-width: 140px;
+        width: 140px;
+        height: 140px;
         border-radius: $border-radius;
         border: 3px solid $card-bg;
         transform: translate(-50%,-50%) scale(1);
         position: absolute;
         left: 50%;
         transition: $transition-base;
+        object-fit: cover;
 
         &:hover {
             transform: translate(-50%,-50%) scale(1.03);

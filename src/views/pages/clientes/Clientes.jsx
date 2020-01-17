@@ -30,7 +30,7 @@ import {
   Button,
   ButtonGroup,
   Card,
-  CardHeader,
+  // CardHeader,
   Container,
   Row,
   Col,
@@ -40,8 +40,6 @@ import {
 // core components
 import DatatableHeader from "components/Headers/DatatableHeader.jsx";
 import DetailClientes from "views/pages/clientes/DetailClientes.jsx";
-
-
 
 import api from "services/api";
 
@@ -74,22 +72,22 @@ const pagination = paginationFactory({
 });
 
 
-const selectRow = {
-  mode: 'checkbox',
-  clickToSelect: true,
-  clickToExpand: true
-};
+// const selectRow = {
+//   mode: 'checkbox',
+//   clickToSelect: true,
+//   clickToExpand: true
+// };
 
-const expandRow = {
-  showExpandColumn: true,
-  renderer: row => (
-    <div>
-      <p>{ `This Expand row is belong to rowKey ${row}` }</p>
-      <p>You can render anything here, also you can add additional data on every row object</p>
-      <p>expandRow.renderer callback will pass the origin row object to you</p>
-    </div>
-  )
-};
+// const expandRow = {
+//   showExpandColumn: true,
+//   renderer: row => (
+//     <div>
+//       <p>{ `This Expand row is belong to rowKey ${row}` }</p>
+//       <p>You can render anything here, also you can add additional data on every row object</p>
+//       <p>expandRow.renderer callback will pass the origin row object to you</p>
+//     </div>
+//   )
+// };
 
 const { SearchBar } = Search;
 
@@ -108,7 +106,7 @@ const BtExportCSV = (props) => {
             handleClick
           }
         >
-          <span>Export</span>
+          <span>Exportar</span>
       </Button>   
     </> 
   );
@@ -131,8 +129,7 @@ class ReactBSTables extends React.Component {
     const response = await api.get("/account");
     this.setState({
       tableData: response.data
-    })
-    console.log(response.data);
+    })    
   }
 
 
@@ -140,14 +137,14 @@ class ReactBSTables extends React.Component {
     return (
       <>
         {/* {console.log(cell)} */}
-        {console.log(row)}
+        {/* {console.log(row)} */}
         {/* {console.log(rowIndex)} */}
         <i className={ formatExtraData[cell] } />
         <Button
             className="buttons-copy buttons-html5"
             color="default"
             size="sm"
-            id="csv-tooltip"   
+            id="edit-tooltip"   
             to={`/admin/clientes/edit/${row._id}`} 
             // to="/admin/clientes/edit"
             tag={Link}    
@@ -157,7 +154,20 @@ class ReactBSTables extends React.Component {
             //   }
             // }     
           >
-            <span>Edit</span>
+            <span>Editar</span>
+        </Button>  
+        <Button
+            className="buttons-copy buttons-html5"
+            color="default"
+            size="sm"
+            id="delete-tooltip"               
+            onClick={() => {                
+                this.setState({idSelected: row._id});
+                this.confirmAlert(row._id);
+              }
+            }     
+          >
+            <span>Deletar</span>
         </Button>  
       </>
 
@@ -200,17 +210,31 @@ class ReactBSTables extends React.Component {
         <ReactBSAlert
           success
           style={{ display: "block", marginTop: "-100px" }}
-          title="Good job!"
+          title="Copiado!"
           onConfirm={() => this.setState({ alert: null })}
           onCancel={() => this.setState({ alert: null })}
           confirmBtnBsStyle="info"
           btnSize=""
         >
-          Copied to clipboard!
+          Tabela copiada para área de transferência
         </ReactBSAlert>
       )
     });
   };
+
+
+  deleteData = (idAccount) => {
+    console.log("Deletou registro");    
+    api.delete(`/account/${idAccount}`)
+    .then(function (response) {
+      console.log(response);
+      this.confirmedAlert()
+    }.bind(this))
+    .catch(function (error) {
+      console.log(error);
+      this.errorAlert();
+    }.bind(this));
+  }
 
 
   hideAlert = () => {
@@ -219,30 +243,28 @@ class ReactBSTables extends React.Component {
     });
   };
 
-  confirmAlert = () => {
+  confirmAlert = (idSelected) => {
     this.setState({
       sweetAlert: (
         <ReactBSAlert
           warning
           style={{ display: "block", marginTop: "-100px"}}
-          title="Are you sure?"
-          onConfirm={() => this.hideAlert()}
-          onCancel={() => this.confirmedAlert()}
+          title="Deseja remover este registro?"
+          onConfirm={() => this.deleteData(idSelected)}
+          onCancel={() => this.hideAlert()}
           showCancel
-          confirmBtnBsStyle="default"
-          confirmBtnText="Cancel"
-          cancelBtnBsStyle="danger"
-          cancelBtnText="Yes, delete it!"
-          btnSize=""
+          confirmBtnBsStyle="danger"
+          confirmBtnText="Deletar"
+          cancelBtnBsStyle="secondary"
+          cancelBtnText="Cancelar"
+          btnSize="" 
         >
-          You won't be able to revert this!
+          Essa operação não poderá ser desfeita
         </ReactBSAlert>
       )
     });
   };
-  confirmedAlert = () => {
-    // Update data 
-    this.putData(this.state.account);
+  confirmedAlert = () => {    
 
     this.setState({
       sweetAlert: (
@@ -250,8 +272,14 @@ class ReactBSTables extends React.Component {
           success
           style={{ display: "block", marginTop: "-100px" }}
           title="Deleted!"
-          onConfirm={() => this.hideAlert()}
-          onCancel={() => this.hideAlert()}
+          onConfirm={() => {
+            this.hideAlert()
+            window.location.reload();
+          }}
+          onCancel={() => {
+            this.hideAlert()
+            window.location.reload();
+          }}
           confirmBtnBsStyle="primary"
           confirmBtnText="Ok"
           btnSize=""
@@ -284,32 +312,14 @@ class ReactBSTables extends React.Component {
         <Container className="mt--6" fluid>
           <Row>
             <div className="col">
-              <Card>
-                <CardHeader>
-                  <h3 className="mb-0">Clientes - Action buttons</h3>
-                  <p className="text-sm mb-0">
-                    This is an exmaple of data table using the well known
-                    react-bootstrap-table2 plugin. This is a minimal setup in
-                    order to get started fast.
-                  </p>
-                  {/* <Button onClick={this.loadData}>
-                    RELOAD
-                  </Button> */}
-                  {/* <p>
-                    {this.state.tableData.length}
-                  </p>
-                  {this.state.tableData.map(item => (
-                    <h2 key={item._id}>{item.name}<br/>{item.email}</h2>
-                  ))} */}
-                  
-                </CardHeader>
+              <Card>                
                 <ToolkitProvider
                   data={this.state.tableData}
                   keyField="name"
                   columns={[                    
                     {
                       dataField: "name",
-                      text: "Name",
+                      text: "Nome",
                       sort: true
                     },
                     {
@@ -353,7 +363,7 @@ class ReactBSTables extends React.Component {
                                   )
                                 }
                               >
-                                <span>Copy</span>
+                                <span>Copiar</span>
                               </Button>
                               <ReactToPrint.default
                                 trigger={() => (
@@ -363,7 +373,7 @@ class ReactBSTables extends React.Component {
                                     className="buttons-copy buttons-html5"
                                     id="print-tooltip"
                                   >
-                                    Print
+                                    Imprimir
                                   </Button>
                                 )}
                                 content={() => this.componentRef}
@@ -399,10 +409,10 @@ class ReactBSTables extends React.Component {
                               className="dataTables_filter px-4 pb-1 float-right"
                             >
                               <label>
-                                Search:
+                                Buscar:
                                 <SearchBar
                                   className="form-control-sm"
-                                  placeholder=""
+                                  placeholder="Digite aqui"
                                   {...props.searchProps}
                                 />
                               </label>
@@ -418,8 +428,8 @@ class ReactBSTables extends React.Component {
                         bootstrap4={true}
                         pagination={pagination}
                         bordered={false}
-                        selectRow={ selectRow }                        
-                        expandRow={ expandRow }
+                        // selectRow={ selectRow }  
+                        // expandRow= { expandRow}                                              
                       />
                     </div>
                   )}

@@ -176,7 +176,7 @@ class Profile extends React.Component {
   }
   
   deleteData = () => {
-    console.log("Alterou registro");    
+    console.log("Deletou registro");    
     api.delete(`/account/${this.state.account._id}`)
     .then(function (response) {
       console.log(response);

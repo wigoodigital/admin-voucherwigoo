@@ -321,15 +321,15 @@ const routes = [
         layout: "/admin"
       },
       {
-        path: "/campanhas/cupons/add",
-        name: "Adicionar Cupons",
+        path: "/campanhas/cupons/:action",
+        name: "Novo Cliente",
         icon: "ni ni-archive-2 text-green",
         component: DetailCupons,
         layout: "/admin"
       },
       {
-        path: "/campanhas/cupons/edit",
-        name: "Editar Cupons",
+        path: "/campanhas/cupons/:action/:id",
+        name: "Editar Cliente",
         icon: "ni ni-archive-2 text-green",
         component: DetailCupons,
         layout: "/admin"

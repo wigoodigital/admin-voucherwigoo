@@ -17,6 +17,8 @@
 import React from "react";
 // react plugin that prints a given react component
 import ReactToPrint from "react-to-print";
+// react library for routing
+import { Link } from "react-router-dom";
 // react component for creating dynamic tables
 import BootstrapTable from "react-bootstrap-table-next";
 import paginationFactory from "react-bootstrap-table2-paginator";
@@ -28,16 +30,18 @@ import {
   Button,
   ButtonGroup,
   Card,
-  CardHeader,
+  // CardHeader,
   Container,
   Row,
   Col,
+  Modal,
   UncontrolledTooltip
 } from "reactstrap";
 // core components
 import DatatableHeader from "components/Headers/DatatableHeader.jsx";
+import DetailCupons from "views/pages/campanhas/cupons/DetailCupons.jsx";
 
-import { dataTable } from "variables/general";
+import api from "services/api";
 
 const pagination = paginationFactory({
   page: 1,
@@ -67,12 +71,116 @@ const pagination = paginationFactory({
   )
 });
 
+
+// const selectRow = {
+//   mode: 'checkbox',
+//   clickToSelect: true,
+//   clickToExpand: true
+// };
+
+// const expandRow = {
+//   showExpandColumn: true,
+//   renderer: row => (
+//     <div>
+//       <p>{ `This Expand row is belong to rowKey ${row}` }</p>
+//       <p>You can render anything here, also you can add additional data on every row object</p>
+//       <p>expandRow.renderer callback will pass the origin row object to you</p>
+//     </div>
+//   )
+// };
+
 const { SearchBar } = Search;
+
+const BtExportCSV = (props) => {
+  const handleClick = () => {
+    props.onExport();
+  };
+  return (
+    <>         
+      <Button
+          className="buttons-copy buttons-html5"
+          color="default"
+          size="sm"
+          id="csv-tooltip"
+          onClick={
+            handleClick
+          }
+        >
+          <span>Exportar</span>
+      </Button>   
+    </> 
+  );
+};
 
 class ReactBSTables extends React.Component {
   state = {
-    alert: null
+    alert: null,
+    tableData: [],
+    exampleModal: false,
+    idSelected: ""
   };
+
+  //get data from API
+  componentDidMount(){
+    this.loadData();
+  }
+
+  loadData = async () => {
+    const response = await api.get("/account");
+    this.setState({
+      tableData: response.data
+    })    
+  }
+
+
+  rankFormatter = (cell, row, rowIndex, formatExtraData) => {
+    return (
+      <>
+        {/* {console.log(cell)} */}
+        {/* {console.log(row)} */}
+        {/* {console.log(rowIndex)} */}
+        <i className={ formatExtraData[cell] } />
+        <Button
+            className="buttons-copy buttons-html5"
+            color="default"
+            size="sm"
+            id="edit-tooltip"   
+            to={`/admin/campanhas/cupons/edit/${row._id}`} 
+            // to="/admin/clientes/edit"
+            tag={Link}    
+            // onClick={() => {
+            //     this.toggleModal("exampleModal")
+            //     this.setState({idSelected: row._id})
+            //   }
+            // }     
+          >
+            <span>Editar</span>
+        </Button>  
+        <Button
+            className="buttons-copy buttons-html5"
+            color="default"
+            size="sm"
+            id="delete-tooltip"               
+            onClick={() => {                
+                this.setState({idSelected: row._id});
+                this.confirmAlert(row._id);
+              }
+            }     
+          >
+            <span>Deletar</span>
+        </Button>  
+      </>
+
+    );
+  }
+
+  toggleModal = state => {
+    this.setState({
+      [state]: !this.state[state]
+    });
+  };
+  
+
   // this function will copy to clipboard an entire table,
   // so you can paste it inside an excel or csv file
   copyToClipboardAsTable = el => {
@@ -102,70 +210,141 @@ class ReactBSTables extends React.Component {
         <ReactBSAlert
           success
           style={{ display: "block", marginTop: "-100px" }}
-          title="Good job!"
+          title="Copiado!"
           onConfirm={() => this.setState({ alert: null })}
           onCancel={() => this.setState({ alert: null })}
           confirmBtnBsStyle="info"
           btnSize=""
         >
-          Copied to clipboard!
+          Tabela copiada para área de transferência
         </ReactBSAlert>
       )
     });
   };
+
+
+  deleteData = (idAccount) => {
+    console.log("Deletou registro");    
+    api.delete(`/account/${idAccount}`)
+    .then(function (response) {
+      console.log(response);
+      this.confirmedAlert()
+    }.bind(this))
+    .catch(function (error) {
+      console.log(error);
+      this.errorAlert();
+    }.bind(this));
+  }
+
+
+  hideAlert = () => {
+    this.setState({
+      sweetAlert: null
+    });
+  };
+
+  confirmAlert = (idSelected) => {
+    this.setState({
+      sweetAlert: (
+        <ReactBSAlert
+          warning
+          style={{ display: "block", marginTop: "-100px"}}
+          title="Deseja remover este registro?"
+          onConfirm={() => this.deleteData(idSelected)}
+          onCancel={() => this.hideAlert()}
+          showCancel
+          confirmBtnBsStyle="danger"
+          confirmBtnText="Deletar"
+          cancelBtnBsStyle="secondary"
+          cancelBtnText="Cancelar"
+          btnSize="" 
+        >
+          Essa operação não poderá ser desfeita
+        </ReactBSAlert>
+      )
+    });
+  };
+  confirmedAlert = () => {    
+
+    this.setState({
+      sweetAlert: (
+        <ReactBSAlert
+          success
+          style={{ display: "block", marginTop: "-100px" }}
+          title="Deleted!"
+          onConfirm={() => {
+            this.hideAlert()
+            window.location.reload();
+          }}
+          onCancel={() => {
+            this.hideAlert()
+            window.location.reload();
+          }}
+          confirmBtnBsStyle="primary"
+          confirmBtnText="Ok"
+          btnSize=""
+        >
+          Your file has been deleted.
+        </ReactBSAlert>
+      )
+    });
+  };
+
+
   render() {
     return (
       <>
-        {this.state.alert}
-        <DatatableHeader name="Cupons" parentName="Campanhas" pathNew="/admin/campanhas/cupons/add" />
+
+        {this.state.alert}        
+        {this.state.sweetAlert}      
+
+        <Modal
+          className="modal-dialog-centered modal-sideview"
+          isOpen={this.state.exampleModal}
+          toggle={() => this.toggleModal("exampleModal")}
+          backdrop={false}
+        >
+          
+          <DetailCupons id={this.state.idSelected} toggleModal={this.toggleModal}/>          
+        </Modal>
+
+        <DatatableHeader name="Cupons" parentName="" pathNew="/admin/campanhas/cupons/add"/>
         <Container className="mt--6" fluid>
           <Row>
-            <div className="col">              
-              <Card>
-                <CardHeader>
-                  <h3 className="mb-0">Cupons - Action buttons</h3>
-                  <p className="text-sm mb-0">
-                    This is an exmaple of data table using the well known
-                    react-bootstrap-table2 plugin. This is a minimal setup in
-                    order to get started fast.
-                  </p>
-                </CardHeader>
+            <div className="col">
+              <Card>                
                 <ToolkitProvider
-                  data={dataTable}
+                  data={this.state.tableData}
                   keyField="name"
-                  columns={[
+                  columns={[                    
                     {
                       dataField: "name",
-                      text: "Name",
+                      text: "Nome",
                       sort: true
                     },
                     {
-                      dataField: "position",
-                      text: "Position",
+                      dataField: "email",
+                      text: "Email",
                       sort: true
                     },
                     {
-                      dataField: "office",
-                      text: "Office",
+                      dataField: "utm",
+                      text: "URL",
                       sort: true
                     },
                     {
-                      dataField: "Age",
-                      text: "age",
-                      sort: true
-                    },
-                    {
-                      dataField: "start_date",
-                      text: "Start date",
-                      sort: true
-                    },
-                    {
-                      dataField: "salary",
-                      text: "Salary",
-                      sort: true
+                      dataField: "actions",
+                      text: "",
+                      sort: false,
+                      formatter: this.rankFormatter,
+                      formatExtraData: {
+                        condicao1: 'ni ni-air-baloon',
+                        condicao2: 'ni ni-active-40'
+                      }
                     }
                   ]}
                   search
+                  exportCSV
                 >
                   {props => (
                     <div className="py-4 table-responsive">
@@ -184,7 +363,7 @@ class ReactBSTables extends React.Component {
                                   )
                                 }
                               >
-                                <span>Copy</span>
+                                <span>Copiar</span>
                               </Button>
                               <ReactToPrint.default
                                 trigger={() => (
@@ -194,25 +373,31 @@ class ReactBSTables extends React.Component {
                                     className="buttons-copy buttons-html5"
                                     id="print-tooltip"
                                   >
-                                    Print
+                                    Imprimir
                                   </Button>
                                 )}
                                 content={() => this.componentRef}
                               />
+                                                            
+                              <BtExportCSV { ...props.csvProps } />                          
                             </ButtonGroup>
                             <UncontrolledTooltip
                               placement="top"
                               target="print-tooltip"
                             >
-                              This will open a print page with the visible rows
-                              of the table.
+                              Esta opção imprime os registros apresentados na tabela
                             </UncontrolledTooltip>
                             <UncontrolledTooltip
                               placement="top"
                               target="copy-tooltip"
                             >
-                              This will copy to your clipboard the visible rows
-                              of the table.
+                              Esta opção copia os registros apresentados na tabela
+                            </UncontrolledTooltip>
+                            <UncontrolledTooltip
+                              placement="top"
+                              target="csv-tooltip"
+                            >
+                              Esta exporta em excel os registros apresentados na tabela
                             </UncontrolledTooltip>
                           </Col>
                           <Col xs={12} sm={6}>
@@ -221,10 +406,10 @@ class ReactBSTables extends React.Component {
                               className="dataTables_filter px-4 pb-1 float-right"
                             >
                               <label>
-                                Search:
+                                Buscar:
                                 <SearchBar
                                   className="form-control-sm"
-                                  placeholder=""
+                                  placeholder="Digite aqui"
                                   {...props.searchProps}
                                 />
                               </label>
@@ -235,10 +420,13 @@ class ReactBSTables extends React.Component {
                       <BootstrapTable
                         ref={el => (this.componentRef = el)}
                         {...props.baseProps}
+                        keyField='name'
+                        id="react-bs-table"
                         bootstrap4={true}
                         pagination={pagination}
                         bordered={false}
-                        id="react-bs-table"
+                        // selectRow={ selectRow }  
+                        // expandRow= { expandRow}                                              
                       />
                     </div>
                   )}

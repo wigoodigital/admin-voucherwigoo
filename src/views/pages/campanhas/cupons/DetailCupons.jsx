@@ -372,6 +372,10 @@ class Profile extends React.Component {
   handleClick = (element) => {    
 
     switch(element) {
+      case 'fileInputLogo':        
+        this.fileInputLogo.current.click();     
+        return;
+
       case 'fileInputImagem1':        
         this.fileInputImage1.current.click();     
         return;
@@ -570,12 +574,14 @@ class Profile extends React.Component {
                               alt="..."
                               className="rounded-circle"
                               src={this.state.campaign.logo}
+                              onClick={() => this.handleClick("fileInputLogo")}
                             />
                           ) : (
                             <img
                               alt="..."
                               className="rounded-circle"
                               src={require("assets/img/theme/placeholder.png")}
+                              onClick={() => this.handleClick("fileInputLogo")}
                             />
                           )}  
                           

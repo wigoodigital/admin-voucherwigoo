@@ -313,6 +313,23 @@ class Profile extends React.Component {
     }));    
   }
 
+  handleClick = (element) => {    
+
+    switch(element) {
+      case 'fileInputLogo':        
+        this.fileInputLogo.current.click();     
+        return;
+
+      case 'fileInputBg':        
+        this.fileInputBg.current.click();     
+        return;        
+        
+      default:
+        return
+    }
+
+  }
+
   handleSubmit(event) {        
     event.preventDefault();
     this.confirmAlert();    
@@ -469,12 +486,14 @@ class Profile extends React.Component {
                         alt="..."
                         src={this.state.account.background}
                         top
+                        onClick={() => this.handleClick("fileInputBg")}
                       />
                     ) : (
                       <CardImg
                         alt="..."
                         src={require("assets/img/theme/placeholder.png")}
                         top
+                        onClick={() => this.handleClick("fileInputBg")}
                       />
                     )}  
                   <Row className="justify-content-center">
@@ -487,12 +506,14 @@ class Profile extends React.Component {
                               alt="..."
                               className="rounded-circle"
                               src={this.state.account.logo}
+                              onClick={() => this.handleClick("fileInputLogo")}
                             />
                           ) : (
                             <img
                               alt="..."
                               className="rounded-circle"
                               src={require("assets/img/theme/placeholder.png")}
+                              onClick={() => this.handleClick("fileInputLogo")}
                             />
                           )}  
                           

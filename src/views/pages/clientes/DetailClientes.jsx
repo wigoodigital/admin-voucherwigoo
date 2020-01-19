@@ -421,7 +421,49 @@ class Profile extends React.Component {
           <Container className="mt--6" fluid>
             <Row>
               <Col className="order-xl-2" xl="4">
-                <Card className="card-profile">                  
+
+                <Card>
+                  <CardHeader>
+                    <h5 className="h3 mb-0">Campanhas Ativas</h5>
+                  </CardHeader>
+
+                  <CardBody>
+                    <ListGroup className="list my--3" flush>
+                      <ListGroupItem className="px-0">
+                        <Row className="align-items-center">
+                          <Col className="col-auto">
+                            <a
+                              className="avatar rounded-circle"
+                              href="#1"
+                              onClick={e => e.preventDefault()}
+                            >
+                              <img
+                                alt="..."
+                                src={require("assets/img/theme/placeholder.png")}
+                              />
+                            </a>
+                          </Col>
+                          <div className="col ml--2">
+                            <h4 className="mb-0">
+                              <a href="#1" onClick={e => e.preventDefault()}>
+                                Campanha Teste
+                              </a>
+                            </h4>
+                            <span className="text-success">●</span>{" "}
+                            <small>Online</small>
+                          </div>
+                          <Col className="col-auto">
+                            <Button color="primary" size="sm" type="button">
+                              Ver
+                            </Button>
+                          </Col>
+                        </Row>
+                      </ListGroupItem>                      
+                    </ListGroup>
+                  </CardBody>
+                </Card>
+
+                <Card className="card-profile sticky-top">                  
                   {this.state.account.background !== undefined && this.state.account.background !== "" ? (
                       <CardImg
                         alt="..."
@@ -517,46 +559,7 @@ class Profile extends React.Component {
                   </CardBody>
                 </Card>
 
-                <Card>
-                  <CardHeader>
-                    <h5 className="h3 mb-0">Campanhas Ativas</h5>
-                  </CardHeader>
-
-                  <CardBody>
-                    <ListGroup className="list my--3" flush>
-                      <ListGroupItem className="px-0">
-                        <Row className="align-items-center">
-                          <Col className="col-auto">
-                            <a
-                              className="avatar rounded-circle"
-                              href="#1"
-                              onClick={e => e.preventDefault()}
-                            >
-                              <img
-                                alt="..."
-                                src={require("assets/img/theme/placeholder.png")}
-                              />
-                            </a>
-                          </Col>
-                          <div className="col ml--2">
-                            <h4 className="mb-0">
-                              <a href="#1" onClick={e => e.preventDefault()}>
-                                Campanha Teste
-                              </a>
-                            </h4>
-                            <span className="text-success">●</span>{" "}
-                            <small>Online</small>
-                          </div>
-                          <Col className="col-auto">
-                            <Button color="primary" size="sm" type="button">
-                              Ver
-                            </Button>
-                          </Col>
-                        </Row>
-                      </ListGroupItem>                      
-                    </ListGroup>
-                  </CardBody>
-                </Card>
+                
 
               </Col>
               <Col className="order-xl-1" xl="8">

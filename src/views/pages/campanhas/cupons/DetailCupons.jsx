@@ -119,7 +119,7 @@ class Profile extends React.Component {
     this.handleImage = this.handleImage.bind(this);
     this.handleVoucher = this.handleVoucher.bind(this);
     this.handleSocial = this.handleSocial.bind(this);
-    this.handleTextEditor = this.handleTextEditor.bind(this);
+    this.handleTextEditor = this.handleTextEditor.bind(this);    
     this.fileInputLogo = React.createRef();    
     this.fileInputLogoLabel = React.createRef();    
     this.fileInputImage1 = React.createRef();    
@@ -369,6 +369,31 @@ class Profile extends React.Component {
     };
   }
 
+  handleClick = (element) => {    
+
+    switch(element) {
+      case 'fileInputImagem1':        
+        this.fileInputImage1.current.click();     
+        return;
+        
+      case 'fileInputImagem2':
+        this.fileInputImage2.current.click();     
+        return;
+        
+      case 'fileInputImagem3':
+        this.fileInputImage3.current.click();     
+        return;
+        
+      case 'fileInputImagem4':
+        this.fileInputImage4.current.click();     
+        return;
+        
+      default:
+        return
+    }
+
+  }
+
   handleSubmit(event) {        
     event.preventDefault();
     this.confirmAlert();    
@@ -602,7 +627,7 @@ class Profile extends React.Component {
                       <div className="h5 mt-2">                        
                         {this.state.campaign.voucher.period}
                       </div>     
-                      <div className="mt-2">                        
+                      <div className="mt-4">                        
                         {/* {{__html: this.state.campaign.voucher.rules}} */}
                         <div className="voucher-rules" dangerouslySetInnerHTML={this.createMarkup()} />
                       </div>  
@@ -896,13 +921,14 @@ class Profile extends React.Component {
                             >
                               Imagem 1
                             </label>
-                            
+
                             {this.state.campaign.images.image1 !== undefined && this.state.campaign.images.image1 !== "" ? (
                               <Card>
                                 <CardImg
                                   alt="..."                                  
                                   src={this.state.campaign.images.image1}
                                   top
+                                  onClick={() => this.handleClick("fileInputImagem1")}
                                 />
                               </Card>
                             ) : (
@@ -911,9 +937,11 @@ class Profile extends React.Component {
                                   alt="..."
                                   src={require("assets/img/theme/placeholder.png")}
                                   top
+                                  onClick={() => this.handleClick("fileInputImagem1")}
                                 />
                               </Card>
-                            )}  
+                            )}
+                            
                             <FormGroup>
                               <div className="custom-file">
                                 <input
@@ -922,14 +950,15 @@ class Profile extends React.Component {
                                   lang="pt-br"
                                   type="file"
                                   name="image1"
-                                  ref={this.fileInputImagem1}                                                                 
+                                  ref={this.fileInputImage1}                                                                 
                                   onChange={event => this.handleImage(event, "image1")}
                                 />
                                 <label className="custom-file-label" htmlFor="input-image1" ref={this.fileInputImagem1Label}>
                                   Selecionar Imagem1
                                 </label>
                               </div>
-                            </FormGroup>                            
+                            </FormGroup>    
+                                                      
                           </Col>
                           <Col lg="6">
                             <label
@@ -943,6 +972,7 @@ class Profile extends React.Component {
                                   alt="..."                                  
                                   src={this.state.campaign.images.image2}
                                   top
+                                  onClick={() => this.handleClick("fileInputImagem2")}
                                 />
                               </Card>
                             ) : (
@@ -951,6 +981,8 @@ class Profile extends React.Component {
                                   alt="..."
                                   src={require("assets/img/theme/placeholder.png")}
                                   top
+                                  onClick={() => this.handleClick("fileInputImagem2")}
+
                                 />
                               </Card>
                             )}  
@@ -962,7 +994,7 @@ class Profile extends React.Component {
                                   lang="pt-br"
                                   type="file"
                                   name="image2"
-                                  ref={this.fileInputImagem2}                                                                 
+                                  ref={this.fileInputImage2}                                                                 
                                   onChange={event => this.handleImage(event, "image2")}
                                 />
                                 <label className="custom-file-label" htmlFor="input-image2" ref={this.fileInputImagem2Label}>
@@ -983,6 +1015,7 @@ class Profile extends React.Component {
                                   alt="..."                                  
                                   src={this.state.campaign.images.image3}
                                   top
+                                  onClick={() => this.handleClick("fileInputImagem3")}
                                 />
                               </Card>
                             ) : (
@@ -991,6 +1024,8 @@ class Profile extends React.Component {
                                   alt="..."
                                   src={require("assets/img/theme/placeholder.png")}
                                   top
+                                  onClick={() => this.handleClick("fileInputImagem3")}
+
                                 />
                               </Card>
                             )}  
@@ -1002,7 +1037,7 @@ class Profile extends React.Component {
                                   lang="pt-br"
                                   type="file"
                                   name="image3"
-                                  ref={this.fileInputImagem3}                                                                 
+                                  ref={this.fileInputImage3}                                                                 
                                   onChange={event => this.handleImage(event, "image3")}
                                 />
                                 <label className="custom-file-label" htmlFor="input-image3" ref={this.fileInputImagem3Label}>
@@ -1023,6 +1058,7 @@ class Profile extends React.Component {
                                   alt="..."                                  
                                   src={this.state.campaign.images.image4}
                                   top
+                                  onClick={() => this.handleClick("fileInputImagem4")}
                                 />
                               </Card>
                             ) : (
@@ -1031,6 +1067,8 @@ class Profile extends React.Component {
                                   alt="..."
                                   src={require("assets/img/theme/placeholder.png")}
                                   top
+                                  onClick={() => this.handleClick("fileInputImagem4")}
+
                                 />
                               </Card>
                             )}  
@@ -1042,7 +1080,7 @@ class Profile extends React.Component {
                                   lang="pt-br"
                                   type="file"
                                   name="image4"
-                                  ref={this.fileInputImagem4}                                                                 
+                                  ref={this.fileInputImage4}                                                                 
                                   onChange={event => this.handleImage(event, "image4")}
                                 />
                                 <label className="custom-file-label" htmlFor="input-image4" ref={this.fileInputImagem4Label}>

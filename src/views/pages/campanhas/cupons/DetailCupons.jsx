@@ -22,6 +22,7 @@ import {
   Card,
   CardHeader,
   CardBody,
+  CardFooter,
   CardImg,
   CardTitle,
   DropdownMenu,
@@ -71,7 +72,15 @@ class Profile extends React.Component {
         color: "#11cdef",
         owner: "",        
         description: "",        
-        observations: "",   
+        observations: "",              
+        voucher: {
+          title: "",   
+          spotlight: "",   
+          promotion: "",   
+          description: "",   
+          period: "",
+          rules: "",
+        },     
         category: {
           id: "",
           name: ""
@@ -108,8 +117,9 @@ class Profile extends React.Component {
     this.handleChange = this.handleChange.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
     this.handleImage = this.handleImage.bind(this);
-    this.handleAddress = this.handleAddress.bind(this);
+    this.handleVoucher = this.handleVoucher.bind(this);
     this.handleSocial = this.handleSocial.bind(this);
+    this.handleTextEditor = this.handleTextEditor.bind(this);
     this.fileInputLogo = React.createRef();    
     this.fileInputLogoLabel = React.createRef();    
     this.fileInputImage1 = React.createRef();    
@@ -203,9 +213,13 @@ class Profile extends React.Component {
 
   handleChange(event) {    
                 
+
     const target = event.target;
     const value = target.type === 'checkbox' ? target.checked : target.value;
     const name = target.name;
+
+    console.log(value);
+
 
     this.setState(prevState => ({
       campaign: {   
@@ -213,6 +227,8 @@ class Profile extends React.Component {
         [name]: value
       }
     }));
+
+    console.log(this.state.campaign);
     
   }
 
@@ -306,13 +322,16 @@ class Profile extends React.Component {
     this.setState(prevState => ({
       campaign: {   
         ...prevState.campaign, 
-        description: value,        
+        voucher: {
+          ...prevState.campaign.voucher, 
+          rules: value
+        } 
       }
     }));
         
   };
 
-  handleAddress(event) {                    
+  handleVoucher(event) {                    
     const target = event.target;
     const value = target.type === 'checkbox' ? target.checked : target.value;
     const name = target.name;;
@@ -320,8 +339,8 @@ class Profile extends React.Component {
     this.setState(prevState => ({
       campaign: {   
         ...prevState.campaign,   
-        local: {
-          ...prevState.campaign.local, 
+        voucher: {
+          ...prevState.campaign.voucher, 
           [name]: value
         }        
       }
@@ -342,6 +361,12 @@ class Profile extends React.Component {
         }        
       }
     }));    
+  }
+
+  createMarkup() {
+    return {
+      __html: this.state.campaign.voucher.rules
+    };
   }
 
   handleSubmit(event) {        
@@ -452,7 +477,49 @@ class Profile extends React.Component {
           <Container className="mt--6" fluid>
             <Row>
               <Col className="order-xl-2" xl="4">
-                <Card className="card-profile">                  
+
+                <Card>
+                  <CardHeader>
+                    <h5 className="h3 mb-0">Campanhas Ativas</h5>
+                  </CardHeader>
+
+                  <CardBody>
+                    <ListGroup className="list my--3" flush>
+                      <ListGroupItem className="px-0">
+                        <Row className="align-items-center">
+                          <Col className="col-auto">
+                            <a
+                              className="avatar rounded-circle"
+                              href="#1"
+                              onClick={e => e.preventDefault()}
+                            >
+                              <img
+                                alt="..."
+                                src={require("assets/img/theme/placeholder.png")}
+                              />
+                            </a>
+                          </Col>
+                          <div className="col ml--2">
+                            <h4 className="mb-0">
+                              <a href="#1" onClick={e => e.preventDefault()}>
+                                Campanha Teste
+                              </a>
+                            </h4>
+                            <span className="text-success">●</span>{" "}
+                            <small>Online</small>
+                          </div>
+                          <Col className="col-auto">
+                            <Button color="primary" size="sm" type="button">
+                              Ver
+                            </Button>
+                          </Col>
+                        </Row>
+                      </ListGroupItem>                      
+                    </ListGroup>
+                  </CardBody>
+                </Card>
+
+                <Card className="card-profile sticky-top">                  
                   {this.state.campaign.background !== undefined && this.state.campaign.background !== "" ? (
                       <CardImg
                         alt="..."
@@ -515,81 +582,46 @@ class Profile extends React.Component {
                       </Button>
                     </div>
                   </CardHeader>
-                  <CardBody className="pt-0">
-                    <Row>
-                      <div className="col">
-                        <div className="card-profile-stats d-flex justify-content-center">
-                          <div>
-                            <span className="heading">0</span>
-                            <span className="description">Visitas</span>
-                          </div>
-                          <div>
-                            <span className="heading">0</span>
-                            <span className="description">Cadastros</span>
-                          </div>
-                          <div>
-                            <span className="heading">0</span>
-                            <span className="description">Cupons</span>
-                          </div>
-                        </div>
-                      </div>
-                    </Row>
+                  <CardBody className="pt-0">                    
                     <div className="text-center">
                       <h5 className="h3">
-                        {this.state.campaign.name}                        
+                        {this.state.campaign.voucher.title}                        
                       </h5>
                       <div className="h5 font-weight-300">
                         <i className="ni location_pin mr-2" />
-                        {this.state.campaign.utm}
+                        {this.state.campaign.voucher.spotlight}
                       </div>
-                      <div className="h5 mt-2">
-                        <i className="ni business_briefcase-24 mr-2" />
-                        {this.state.campaign.category.name}
+                      <div className="h5 mt-2">                                                
+                        <div className="display-2">
+                          {this.state.campaign.voucher.promotion}
+                        </div>
                       </div>             
+                      <div className="mt-2">                        
+                        {this.state.campaign.voucher.description}
+                      </div>             
+                      <div className="h5 mt-2">                        
+                        {this.state.campaign.voucher.period}
+                      </div>     
+                      <div className="mt-2">                        
+                        {/* {{__html: this.state.campaign.voucher.rules}} */}
+                        <div className="voucher-rules" dangerouslySetInnerHTML={this.createMarkup()} />
+                      </div>  
+                      <div className="h5 mt-2">                        
+                        {this.state.campaign.voucher.redirect}
+                      </div>          
                     </div>
                   </CardBody>
+                  <CardFooter className="bg-transparent">
+                    <div className="text-center">
+                      <div className="h5">
+                        <p>Apresente o código abaixo</p>                        
+                      </div> 
+                      <img src={require("assets/img/theme/qrcode.jpg")} alt=""/>
+                    </div>
+                  </CardFooter>
                 </Card>
 
-                <Card>
-                  <CardHeader>
-                    <h5 className="h3 mb-0">Campanhas Ativas</h5>
-                  </CardHeader>
-
-                  <CardBody>
-                    <ListGroup className="list my--3" flush>
-                      <ListGroupItem className="px-0">
-                        <Row className="align-items-center">
-                          <Col className="col-auto">
-                            <a
-                              className="avatar rounded-circle"
-                              href="#1"
-                              onClick={e => e.preventDefault()}
-                            >
-                              <img
-                                alt="..."
-                                src={require("assets/img/theme/placeholder.png")}
-                              />
-                            </a>
-                          </Col>
-                          <div className="col ml--2">
-                            <h4 className="mb-0">
-                              <a href="#1" onClick={e => e.preventDefault()}>
-                                Campanha Teste
-                              </a>
-                            </h4>
-                            <span className="text-success">●</span>{" "}
-                            <small>Online</small>
-                          </div>
-                          <Col className="col-auto">
-                            <Button color="primary" size="sm" type="button">
-                              Ver
-                            </Button>
-                          </Col>
-                        </Row>
-                      </ListGroupItem>                      
-                    </ListGroup>
-                  </CardBody>
-                </Card>
+                
 
               </Col>
               <Col className="order-xl-1" xl="8">
@@ -753,16 +785,16 @@ class Profile extends React.Component {
                             <FormGroup>
                               <label
                                 className="form-control-label"
-                                htmlFor="input-title"
+                                htmlFor="input-name"
                               >
-                                Título 
+                                Nome 
                               </label>
                               <Input                                
-                                id="input-title"                                
+                                id="input-name"                                
                                 placeholder="Nome da campanha"
                                 type="text"
-                                name="title"
-                                value={this.state.campaign.title}
+                                name="name"
+                                value={this.state.campaign.name}
                                 onChange={this.handleChange}
                               />
                             </FormGroup>
@@ -1059,6 +1091,24 @@ class Profile extends React.Component {
                             <FormGroup>
                               <label
                                 className="form-control-label"
+                                htmlFor="input-title"
+                              >
+                                Título
+                              </label>
+                              <Input                                
+                                id="input-title"
+                                placeholder="Promoção de..."
+                                type="text"
+                                name="title"
+                                value={this.state.campaign.voucher.title}
+                                onChange={this.handleVoucher}
+                              />
+                            </FormGroup>
+                          </Col>
+                          <Col lg="12">
+                            <FormGroup>
+                              <label
+                                className="form-control-label"
                                 htmlFor="input-spotlight"
                               >
                                 Destaque
@@ -1068,8 +1118,8 @@ class Profile extends React.Component {
                                 placeholder="Vale um"
                                 type="text"
                                 name="spotlight"
-                                value={this.state.campaign.spotlight}
-                                onChange={this.handleChange}
+                                value={this.state.campaign.voucher.spotlight}
+                                onChange={this.handleVoucher}
                               />
                             </FormGroup>
                           </Col>
@@ -1086,20 +1136,56 @@ class Profile extends React.Component {
                                 placeholder="50%"
                                 type="text"
                                 name="promotion"
-                                value={this.state.campaign.promotion}
-                                onChange={this.handleChange}
+                                value={this.state.campaign.voucher.promotion}
+                                onChange={this.handleVoucher}
                               />
                             </FormGroup>
                           </Col>
+                          <Col lg="12">                            
+                            <FormGroup>
+                              <label
+                                className="form-control-label"
+                                htmlFor="input-description"
+                              >
+                                Descrição
+                              </label>
+                              <Input                                
+                                id="input-description"
+                                placeholder="Voucher equivale a 50% de desconto..."
+                                type="text"
+                                name="description"
+                                value={this.state.campaign.voucher.description}
+                                onChange={this.handleVoucher}
+                              />
+                            </FormGroup>                           
+                          </Col>
+                          <Col lg="12">
+                            <FormGroup>
+                              <label
+                                className="form-control-label"
+                                htmlFor="input-period"
+                              >
+                                Período
+                              </label>
+                              <Input                                
+                                id="input-period"
+                                placeholder="Válido até dia 31/01/2019"
+                                type="text"
+                                name="period"
+                                value={this.state.campaign.voucher.period}
+                                onChange={this.handleVoucher}
+                              />
+                            </FormGroup>
+                          </Col>   
                           <Col lg="12">
                             <label
                               className="form-control-label"                              
                             >
-                              Descrição
+                              Regulamento
                             </label>
                             <FormGroup>
                               <ReactQuill
-                                value={this.state.campaign.description}
+                                value={this.state.campaign.voucher.rules}
                                 onChange={this.handleTextEditor}
                                 theme="snow"
                                 modules={{
@@ -1118,42 +1204,24 @@ class Profile extends React.Component {
                                 }}
                               />
                             </FormGroup>                            
-                          </Col>
-                          <Col lg="12">
-                            <FormGroup>
-                              <label
-                                className="form-control-label"
-                                htmlFor="input-period"
-                              >
-                                Período
-                              </label>
-                              <Input                                
-                                id="input-period"
-                                placeholder="50%"
-                                type="text"
-                                name="period"
-                                value={this.state.campaign.period}
-                                onChange={this.handleChange}
-                              />
-                            </FormGroup>
-                          </Col>                          
+                          </Col>                       
                         </Row>
                         <Row>
                           <Col md="12">
                             <FormGroup>
                               <label
                                 className="form-control-label"
-                                htmlFor="input-website"
+                                htmlFor="input-redirect"
                               >
                                 Redirect
                               </label>
                               <Input                                
-                                id="input-website"
+                                id="input-redirect"
                                 placeholder="https://www.example.com.br"
                                 type="text"
-                                name="website"
-                                value={this.state.campaign.website}
-                                onChange={this.handleChange}
+                                name="redirect"
+                                value={this.state.campaign.voucher.redirect}
+                                onChange={this.handleVoucher}
                               />
                             </FormGroup>
                           </Col>

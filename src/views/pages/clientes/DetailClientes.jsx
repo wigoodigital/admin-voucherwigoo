@@ -50,6 +50,13 @@ import Select2 from "react-select2-wrapper";
 import ReactQuill from "react-quill";
 
 
+import { ObjectID } from 'bson';
+import FormData from 'form-data'
+
+import cloudinary from 'cloudinary-core';
+import { BeatLoader } from "react-spinners";
+
+
 import {BASE_URL} from "variables/general.jsx"
 
 import api from "services/api";
@@ -93,9 +100,12 @@ class Profile extends React.Component {
         id: "",
         name: ""
       },         
-      fieldsText: {
-
-      },    
+      loading:{
+        logo: false,
+        bg: false
+      }, 
+      campaigns: [{}],
+      newObjectId: new ObjectID(),
       new: this.props.match.params.action === "add" ? true : false 
     };
     
@@ -112,8 +122,11 @@ class Profile extends React.Component {
 
   //get data from API
   componentDidMount(){        
-    if(this.props.match.params.id) 
-      this.getData();            
+    if(this.props.match.params.id) {
+      this.getData(); 
+      this.getDataCampaigns();
+    }
+               
   }
 
   getData = () => {           
@@ -136,6 +149,29 @@ class Profile extends React.Component {
       console.log("end GET");
     });
   }
+
+
+  getDataCampaigns = () => {           
+    api.get(`campaign/account/${this.props.match.params.id}`)
+    .then(function (response) {
+      // handle success      
+      this.setState( {
+        campaigns: {             
+          ...response.data               
+        }
+      });    
+      console.log(this.state.campaigns);     
+    }.bind(this))
+    .catch(function (error) {
+      // handle error
+      console.log(error);
+    })
+    .finally(function () {
+      // always executed
+      console.log("end GET");
+    });
+  }
+
 
   postData = accountData => {
     console.log("Inseriu mais um registro");       
@@ -225,50 +261,122 @@ class Profile extends React.Component {
     })    
   }
 
-  handleImage(e, typeImage) {
+  handleImage(e, typeImage) {    
 
-    let reader = new FileReader();
-    let file = e.target.files[0];
+    const file = new Blob([e.target.files[0]], { type:  'image/png'}); // kind of works and choses stream as content type of file (not request)    
+
+    let formData = new FormData();    
+    formData.append('file', file, file.fileName);
 
 
     switch(typeImage) {
+
       case 'logo':
-        reader.onloadend = () => {          
+
+        const currentLogo = this.state.account.logo;
+          
+          formData.append('id', new ObjectID().toHexString() );
+          if(currentLogo !== ""){                        
+            formData.append('idRemove', currentLogo );
+            formData.append('remove', true);
+          } else {                                   
+            formData.append('remove', false);
+          }
+          
+            
           this.setState(prevState => ({
-            account: {   
-              ...prevState.account, 
-              fileLogo: file,
-              logo: reader.result
+            loading: {   
+              ...prevState.loading,                 
+              logo: true
             }
           }));
 
-        }
+                    
+          this.fileInputLogoLabel.current.innerText = e.target.files[0].name;  
 
-        reader.readAsDataURL(file);
+          api.post("/image", formData, {
+            headers: {
+              "Content-Type": `multipart/form-data; boundary=${formData._boundary}`,
+            }
+          })
+          .then(function (response) {
+            
+            this.setState(prevState => ({
+              account: {   
+                ...prevState.account,                 
+                logo: response.data.public_id                
+              }
+            }));
+            this.setState(prevState => ({
+              loading: {   
+                ...prevState.loading,                 
+                logo: false
+              }
+            }));
+            
+          }.bind(this))
+          .catch(function (error) {
+            console.log(error);
+          });   
+        
 
-        this.fileInputLogoLabel.current.innerText = file.name;        
 
         return;
       case 'bg':
 
-        reader.onloadend = () => {          
+        const currentBg =  this.state.account.background;
+          
+          formData.append('id', new ObjectID().toHexString() );
+          if(currentBg !== ""){
+            formData.append('idRemove', currentBg );
+            formData.append('remove', true);
+          } else {            
+            formData.append('remove', false);
+          }
+          
+            
           this.setState(prevState => ({
-            account: {   
-              ...prevState.account, 
-              fileBackground: file,
-              background: reader.result
+            loading: {   
+              ...prevState.loading,                 
+              bg: true
             }
-          }));          
-        }
-    
-        reader.readAsDataURL(file);
+          }));
 
-        this.fileInputBgLabel.current.innerText = file.name;
+                    
+          this.fileInputBgLabel.current.innerText = e.target.files[0].name;  
+
+          api.post("/image", formData, {
+            headers: {
+              "Content-Type": `multipart/form-data; boundary=${formData._boundary}`,
+            }
+          })
+          .then(function (response) {
+            
+            this.setState(prevState => ({
+              account: {   
+                ...prevState.account,                 
+                background: response.data.public_id                
+              }
+            }));
+            this.setState(prevState => ({
+              loading: {   
+                ...prevState.loading,                 
+                bg: false
+              }
+            }));
+            
+          }.bind(this))
+          .catch(function (error) {
+            console.log(error);
+          });   
 
         return;
+
       default:
-        return;
-    }    
+        return;        
+    }  
+    
+
   }
 
   handleTextEditor = value => {
@@ -425,7 +533,61 @@ class Profile extends React.Component {
     });
   };
 
+  renderCampaigns(props) {
+    const cloudinaryCore = new cloudinary.Cloudinary({cloud_name: 'djmiq2iq6'});
+
+    
+    const campaigns = this.state.campaigns;
+    Object.entries(campaigns).map((i, campaign) => {
+      console.log(i);
+      console.log(campaign);
+    });
+    const listItems = (
+      <>     
+        {Object.entries(campaigns).map((campaign, i) =>  
+          <ListGroupItem className="px-0">
+            <Row className="align-items-center">
+              <Col className="col-auto">
+                <a
+                  className="avatar rounded-circle"
+                  href="#1"
+                  onClick={e => e.preventDefault()}
+                >
+                  <img
+                    alt="..."                
+                    src={cloudinaryCore.url(campaign.logo)}
+                  />
+                </a>
+              </Col>
+              <div className="col ml--2">
+                <h4 className="mb-0">
+                  <a href="#1" onClick={e => e.preventDefault()}>
+                    {campaign.name}
+                  </a>
+                </h4>
+                <span className="text-success">●</span>{" "}
+                <small>Online</small>
+              </div>
+              <Col className="col-auto">
+                <Button color="primary" size="sm" type="button">
+                  Ver
+                </Button>
+              </Col>
+            </Row>
+          </ListGroupItem> 
+        )}
+      </>
+    );
+    
+    return listItems;
+    
+  }
+
+  
+
   render() {
+
+    const cloudinaryCore = new cloudinary.Cloudinary({cloud_name: 'djmiq2iq6'});
     return (
       <>
         {this.state.alert}
@@ -475,7 +637,10 @@ class Profile extends React.Component {
                             </Button>
                           </Col>
                         </Row>
-                      </ListGroupItem>                      
+                      </ListGroupItem>                                     
+
+                     {this.renderCampaigns()} 
+
                     </ListGroup>
                   </CardBody>
                 </Card>
@@ -483,8 +648,8 @@ class Profile extends React.Component {
                 <Card className="card-profile sticky-top">                  
                   {this.state.account.background !== undefined && this.state.account.background !== "" ? (
                       <CardImg
-                        alt="..."
-                        src={this.state.account.background}
+                        alt="..."                        
+                        src={cloudinaryCore.url(this.state.account.background)}
                         top
                         onClick={() => this.handleClick("fileInputBg")}
                       />
@@ -504,8 +669,8 @@ class Profile extends React.Component {
                           {this.state.account.logo !== undefined && this.state.account.logo !== "" ? (
                             <img
                               alt="..."
-                              className="rounded-circle"
-                              src={this.state.account.logo}
+                              className="rounded-circle"                              
+                              src={cloudinaryCore.url(this.state.account.logo)}
                               onClick={() => this.handleClick("fileInputLogo")}
                             />
                           ) : (
@@ -804,6 +969,14 @@ class Profile extends React.Component {
                             >
                               Logo
                             </label>
+                            <div className="sweet-loading" style={{textAlign: "center"}}>
+                              <BeatLoader
+                                size={15}
+                                //size={"150px"} this also works
+                                color={"#123abc"}
+                                loading={this.state.loading.logo}
+                              />
+                            </div>
                             <FormGroup>
                               <div className="custom-file">
                                 <input
@@ -827,6 +1000,14 @@ class Profile extends React.Component {
                             >
                               Background
                             </label>
+                            <div className="sweet-loading" style={{textAlign: "center"}}>
+                              <BeatLoader
+                                size={15}
+                                //size={"150px"} this also works
+                                color={"#123abc"}
+                                loading={this.state.loading.bg}
+                              />
+                            </div>
                             <FormGroup>
                               <div className="custom-file">
                                 <input

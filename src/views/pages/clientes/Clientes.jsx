@@ -129,7 +129,8 @@ class ReactBSTables extends React.Component {
     const response = await api.get("/account");
     this.setState({
       tableData: response.data
-    })    
+    })   
+    console.log(response.data); 
   }
 
 

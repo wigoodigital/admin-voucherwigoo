@@ -10,6 +10,7 @@
     "bson": "^4.0.3",
     "chart.js": "2.8.0",
     "classnames": "2.2.6",
+    "cloudinary-core": "^2.8.0",
     "dropzone": "5.5.1",
     "form-data": "^3.0.0",
     "list.js": "1.5.0",
@@ -37,6 +38,7 @@
     "react-router-dom": "5.0.0",
     "react-scripts": "2.1.8",
     "react-select2-wrapper": "1.0.4-beta6",
+    "react-spinners": "^0.8.0",
     "react-tagsinput": "3.19.0",
     "react-to-print": "2.1.0",
     "reactstrap": "8.0.0"

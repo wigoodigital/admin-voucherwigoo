@@ -64,10 +64,15 @@ import 'moment/locale/pt-br';
 import { ObjectID } from 'bson';
 import FormData from 'form-data'
 
+import cloudinary from 'cloudinary-core';
+import { BeatLoader } from "react-spinners";
+
+
 
 import {BASE_URL} from "variables/general.jsx"
 
 import api from "services/api";
+
 
 class Profile extends React.Component {
 
@@ -88,6 +93,7 @@ class Profile extends React.Component {
           name: ""
         },     
         logo: "",    
+        background: "",    
         images: {
           image1: "",
           image2: "",
@@ -122,7 +128,15 @@ class Profile extends React.Component {
       ],  
       accounts: [], 
       new: this.props.match.params.action === "add" ? true : false ,
-      newObjectId: new ObjectID()
+      newObjectId: new ObjectID(),
+      loading:{
+        logo: false,
+        bg: false,
+        image1: false,
+        image2: false,
+        image3: false,
+        image4: false,
+      }
     };
     
     this.handleChange = this.handleChange.bind(this);
@@ -134,13 +148,13 @@ class Profile extends React.Component {
     this.fileInputLogo = React.createRef();    
     this.fileInputLogoLabel = React.createRef();    
     this.fileInputImage1 = React.createRef();    
-    this.fileInputImage1Label = React.createRef();    
+    this.fileInputimage1Label = React.createRef();    
     this.fileInputImage2 = React.createRef();    
-    this.fileInputImage2Label = React.createRef();    
+    this.fileInputimage2Label = React.createRef();    
     this.fileInputImage3 = React.createRef();    
-    this.fileInputImage3Label = React.createRef();    
+    this.fileInputimage3Label = React.createRef();    
     this.fileInputImage4 = React.createRef();    
-    this.fileInputImage4Label = React.createRef();        
+    this.fileInputimage4Label = React.createRef();        
   }
 
   //get data from API
@@ -331,87 +345,170 @@ class Profile extends React.Component {
 
   handleImage(e, typeImage) {
 
-    let reader = new FileReader();
-    // let file = e.target.files[0];
+    const file = new Blob([e.target.files[0]], { type:  'image/png'}); // kind of works and choses stream as content type of file (not request)    
 
-    const file = new Blob([e.target.files[0]], { type:  'image/png'}); // kind of works and choses stream as content type of file (not request)
-    // const file = new Blob([files[0]], { type: 'image/jpg' });// WORKS much better (if you know what MIME type you want.
-
-    let formData = new FormData();
-    formData.append('id', new ObjectID().toHexString());
+    let formData = new FormData();    
     formData.append('file', file, file.fileName);
 
-    console.log(file);
-    console.log(formData);
 
     switch(typeImage) {
-      case 'teste':
-        api.post("/image", formData, {
-          headers: {
-            "Content-Type": `multipart/form-data; boundary=${formData._boundary}`,
-          }
-        })
-        .then(function (response) {
-          console.log(response);
-        })
-        .catch(function (error) {
-          console.log(error);
-        }); 
 
-        return;
       case 'logo':
-        reader.onloadend = () => {          
+
+        const currentLogo =  this.state.campaign.logo;
+          
+          formData.append('id', new ObjectID().toHexString() );
+          if(currentLogo !== ""){
+            formData.append('idRemove', currentLogo );
+            formData.append('remove', true);
+          } else {            
+            formData.append('remove', false);
+          }
+          
+            
           this.setState(prevState => ({
-            campaign: {   
-              ...prevState.campaign, 
-              fileLogo: file,
-              logo: reader.result
+            loading: {   
+              ...prevState.loading,                 
+              logo: true
             }
           }));
 
-        }
+                    
+          this.fileInputLogoLabel.current.innerText = e.target.files[0].name;  
 
-        reader.readAsDataURL(file);
+          api.post("/image", formData, {
+            headers: {
+              "Content-Type": `multipart/form-data; boundary=${formData._boundary}`,
+            }
+          })
+          .then(function (response) {
+            
+            this.setState(prevState => ({
+              campaign: {   
+                ...prevState.campaign,                 
+                logo: response.data.public_id                
+              }
+            }));
+            this.setState(prevState => ({
+              loading: {   
+                ...prevState.loading,                 
+                logo: false
+              }
+            }));
+            
+          }.bind(this))
+          .catch(function (error) {
+            console.log(error);
+          });   
+        
 
-        this.fileInputLogoLabel.current.innerText = file.name;        
 
         return;
       case 'bg':
 
-        reader.onloadend = () => {          
+        const currentBg =  this.state.campaign.background;
+          
+          formData.append('id', new ObjectID().toHexString() );
+          if(currentBg !== ""){
+            formData.append('idRemove', currentBg );
+            formData.append('remove', true);
+          } else {            
+            formData.append('remove', false);
+          }
+          
+            
           this.setState(prevState => ({
-            campaign: {   
-              ...prevState.campaign, 
-              fileBackground: file,
-              background: reader.result
+            loading: {   
+              ...prevState.loading,                 
+              bg: true
             }
-          }));          
-        }
-    
-        reader.readAsDataURL(file);
+          }));
 
-        this.fileInputBgLabel.current.innerText = file.name;
+                    
+          this.fileInputBgLabel.current.innerText = e.target.files[0].name;  
+
+          api.post("/image", formData, {
+            headers: {
+              "Content-Type": `multipart/form-data; boundary=${formData._boundary}`,
+            }
+          })
+          .then(function (response) {
+            
+            this.setState(prevState => ({
+              campaign: {   
+                ...prevState.campaign,                 
+                background: response.data.public_id                
+              }
+            }));
+            this.setState(prevState => ({
+              loading: {   
+                ...prevState.loading,                 
+                bg: false
+              }
+            }));
+            
+          }.bind(this))
+          .catch(function (error) {
+            console.log(error);
+          });   
+
+
+
 
         return;
 
       default:
-        reader.onloadend = () => {          
-          this.setState(prevState => ({
-            campaign: {   
-              ...prevState.campaign, 
-              fileImagem1: file,
-              images: {
-                ...prevState.campaign.images, 
-                [typeImage]: reader.result
-              }
-            }
-          }));   
-          
-          console.log(this.state.campaign);
-        }
-    
-        reader.readAsDataURL(file);
+
         
+          const currentImage =  this.state.campaign.images[typeImage];
+          
+          formData.append('id', new ObjectID().toHexString() );
+          if(currentImage !== ""){
+            formData.append('idRemove', currentImage );
+            formData.append('remove', true);
+          } else {            
+            formData.append('remove', false);
+          }
+          
+            
+          this.setState(prevState => ({
+            loading: {   
+              ...prevState.loading,                 
+              [typeImage]: true
+            }
+          }));
+
+                    
+          this['fileInput' + typeImage + 'Label'].current.innerText = e.target.files[0].name;  
+
+          api.post("/image", formData, {
+            headers: {
+              "Content-Type": `multipart/form-data; boundary=${formData._boundary}`,
+            }
+          })
+          .then(function (response) {
+            
+            this.setState(prevState => ({
+              campaign: {   
+                ...prevState.campaign,                 
+                images: {
+                  ...prevState.campaign.images, 
+                  [typeImage]: response.data.public_id
+                }
+              }
+            }));
+            this.setState(prevState => ({
+              loading: {   
+                ...prevState.loading,                 
+                [typeImage]: false
+              }
+            }));
+            
+          }.bind(this))
+          .catch(function (error) {
+            console.log(error);
+          });        
+
 
         return;        
     }    
@@ -602,6 +699,8 @@ class Profile extends React.Component {
   };
 
   render() {
+
+    const cloudinaryCore = new cloudinary.Cloudinary({cloud_name: 'djmiq2iq6'});
     return (
       <>
         {this.state.alert}
@@ -609,7 +708,8 @@ class Profile extends React.Component {
           <SimpleHeader name="Novo Cupom" parentName="Cupom" />
         ) : (
           <BackHeader name={this.state.campaign.name} parentName="Cupom" parentPath="/admin/campanhas/cupons" />
-        )}        
+        )}     
+        <img src={cloudinaryCore.url('')} alt=""/>   
         <Form onSubmit={this.handleSubmit}> 
           <Container className="mt--6" fluid>
             <Row>
@@ -680,8 +780,8 @@ class Profile extends React.Component {
                           {this.state.campaign.logo !== undefined && this.state.campaign.logo !== "" ? (
                             <img
                               alt="..."
-                              className="rounded-circle"
-                              src={this.state.campaign.logo}
+                              className="rounded-circle"                              
+                              src={cloudinaryCore.url(this.state.campaign.logo)}
                               onClick={() => this.handleClick("fileInputLogo")}
                             />
                           ) : (
@@ -1149,6 +1249,14 @@ class Profile extends React.Component {
                             >
                               Logo
                             </label>
+                            <div className="sweet-loading" style={{textAlign: "center"}}>
+                              <BeatLoader
+                                size={15}
+                                //size={"150px"} this also works
+                                color={"#123abc"}
+                                loading={this.state.loading.logo}
+                              />
+                            </div>
                             <FormGroup>
                               <div className="custom-file">
                                 <input
@@ -1172,12 +1280,20 @@ class Profile extends React.Component {
                             >
                               Imagem 1
                             </label>
+                            <div className="sweet-loading" style={{textAlign: "center"}}>
+                              <BeatLoader
+                                size={15}
+                                //size={"150px"} this also works
+                                color={"#123abc"}
+                                loading={this.state.loading.image1}
+                              />
+                            </div>
 
                             {this.state.campaign.images.image1 !== undefined && this.state.campaign.images.image1 !== "" ? (
                               <Card>
                                 <CardImg
-                                  alt="..."                                  
-                                  src={this.state.campaign.images.image1}
+                                  alt="..."                                                                   
+                                  src={cloudinaryCore.url(this.state.campaign.images.image1)}
                                   top
                                   onClick={() => this.handleClick("fileInputImagem1")}
                                 />
@@ -1202,9 +1318,9 @@ class Profile extends React.Component {
                                   type="file"
                                   name="image1"
                                   ref={this.fileInputImage1}                                                                 
-                                  onChange={event => this.handleImage(event, "teste")}
+                                  onChange={event => this.handleImage(event, "image1")}
                                 />
-                                <label className="custom-file-label" htmlFor="input-image1" ref={this.fileInputImagem1Label}>
+                                <label className="custom-file-label" htmlFor="input-image1" ref={this.fileInputimage1Label}>
                                   Selecionar Imagem1
                                 </label>
                               </div>
@@ -1217,11 +1333,19 @@ class Profile extends React.Component {
                             >
                               Imagem 2
                             </label>
+                            <div className="sweet-loading" style={{textAlign: "center"}}>
+                              <BeatLoader
+                                size={15}
+                                //size={"150px"} this also works
+                                color={"#123abc"}
+                                loading={this.state.loading.image2}
+                              />
+                            </div>
                             {this.state.campaign.images.image2 !== undefined && this.state.campaign.images.image2 !== "" ? (
                               <Card>
                                 <CardImg
-                                  alt="..."                                  
-                                  src={this.state.campaign.images.image2}
+                                  alt="..."                                                                    
+                                  src={cloudinaryCore.url(this.state.campaign.images.image2)}
                                   top
                                   onClick={() => this.handleClick("fileInputImagem2")}
                                 />
@@ -1248,7 +1372,7 @@ class Profile extends React.Component {
                                   ref={this.fileInputImage2}                                                                 
                                   onChange={event => this.handleImage(event, "image2")}
                                 />
-                                <label className="custom-file-label" htmlFor="input-image2" ref={this.fileInputImagem2Label}>
+                                <label className="custom-file-label" htmlFor="input-image2" ref={this.fileInputimage2Label}>
                                   Selecionar Imagem2
                                 </label>
                               </div>
@@ -1260,11 +1384,19 @@ class Profile extends React.Component {
                             >
                               Imagem 3
                             </label>
+                            <div className="sweet-loading" style={{textAlign: "center"}}>
+                              <BeatLoader
+                                size={15}
+                                //size={"150px"} this also works
+                                color={"#123abc"}
+                                loading={this.state.loading.image3}
+                              />
+                            </div>
                             {this.state.campaign.images.image3 !== undefined && this.state.campaign.images.image3 !== "" ? (
                               <Card>
                                 <CardImg
-                                  alt="..."                                  
-                                  src={this.state.campaign.images.image3}
+                                  alt="..."                                                                    
+                                  src={cloudinaryCore.url(this.state.campaign.images.image3)}
                                   top
                                   onClick={() => this.handleClick("fileInputImagem3")}
                                 />
@@ -1291,7 +1423,7 @@ class Profile extends React.Component {
                                   ref={this.fileInputImage3}                                                                 
                                   onChange={event => this.handleImage(event, "image3")}
                                 />
-                                <label className="custom-file-label" htmlFor="input-image3" ref={this.fileInputImagem3Label}>
+                                <label className="custom-file-label" htmlFor="input-image3" ref={this.fileInputimage3Label}>
                                   Selecionar Imagem 3
                                 </label>
                               </div>
@@ -1303,11 +1435,19 @@ class Profile extends React.Component {
                             >
                               Imagem 4
                             </label>
+                            <div className="sweet-loading" style={{textAlign: "center"}}>
+                              <BeatLoader
+                                size={15}
+                                //size={"150px"} this also works
+                                color={"#123abc"}
+                                loading={this.state.loading.image4}
+                              />
+                            </div>
                             {this.state.campaign.images.image4 !== undefined && this.state.campaign.images.image4 !== "" ? (
                               <Card>
                                 <CardImg
-                                  alt="..."                                  
-                                  src={this.state.campaign.images.image4}
+                                  alt="..."                                                                    
+                                  src={cloudinaryCore.url(this.state.campaign.images.image4)}
                                   top
                                   onClick={() => this.handleClick("fileInputImagem4")}
                                 />
@@ -1334,7 +1474,7 @@ class Profile extends React.Component {
                                   ref={this.fileInputImage4}                                                                 
                                   onChange={event => this.handleImage(event, "image4")}
                                 />
-                                <label className="custom-file-label" htmlFor="input-image4" ref={this.fileInputImagem4Label}>
+                                <label className="custom-file-label" htmlFor="input-image4" ref={this.fileInputimage4Label}>
                                   Selecionar Imagem 4
                                 </label>
                               </div>

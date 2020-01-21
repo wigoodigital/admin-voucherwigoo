@@ -310,13 +310,13 @@ class ReactBSTables extends React.Component {
                     },
                     {
                       dataField: "period.start",
-                      text: "Data inicial",
+                      text: "Data inicial (ano/mês/dia)",
                       formatter: this.dateFormatter,
                       sort: true
                     },
                     {
                       dataField: "period.end",
-                      text: "Data Final",
+                      text: "Data Final (ano/mês/dia)",
                       formatter: this.dateFormatter,
                       sort: true
                     },

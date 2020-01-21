@@ -31,7 +31,10 @@ import {
   UncontrolledDropdown,
   FormGroup,
   Form,
-  Input,
+  Input,  
+  InputGroupAddon,
+  InputGroupText,
+  InputGroup,
   ListGroupItem,
   ListGroup,
   // Progress,
@@ -39,6 +42,7 @@ import {
   Row,
   Col
 } from "reactstrap";
+
 // core components
 import BackHeader from "components/Headers/BackHeader.jsx";
 import SimpleHeader from "components/Headers/SimpleHeader.jsx";
@@ -49,6 +53,16 @@ import Select2 from "react-select2-wrapper";
 // import InputMask from "react-input-mask";
 // react plugin that creates text editor
 import ReactQuill from "react-quill";
+// react plugin that creates an input with badges
+import TagsInput from "react-tagsinput";
+// react plugin used to create datetimepicker
+import ReactDatetime from "react-datetime";
+// react plugin used to create datetimepicker
+import * as moment from 'moment';
+import 'moment/locale/pt-br';
+
+import { ObjectID } from 'bson';
+import FormData from 'form-data'
 
 
 import {BASE_URL} from "variables/general.jsx"
@@ -62,17 +76,25 @@ class Profile extends React.Component {
     this.state = {      
       campaign: {
         _id: "",
+        account: {
+          id: "",
+          name: ""
+        },     
         name: "",        
-        email: "",    
-        logo: "",   
-        background: "",   
-        type: 0,   
-        status: true,
-        utm: "",          
+        utm: "",    
         color: "#11cdef",
-        owner: "",        
-        description: "",        
-        observations: "",              
+        category: {
+          id: "",
+          name: ""
+        },     
+        logo: "",    
+        images: {
+          image1: "",
+          image2: "",
+          image3: "",
+          image4: ""
+        },       
+        status: true,                                                         
         voucher: {
           title: "",   
           spotlight: "",   
@@ -80,38 +102,27 @@ class Profile extends React.Component {
           description: "",   
           period: "",
           rules: "",
-        },     
-        category: {
-          id: "",
-          name: ""
-        },     
-        local: {
-          address: "",
-          city: "",
-          country: "Brasil",
-          postalCode: ""
-        }, 
-        images: {
-          image1: "",
-          image2: "",
-          image3: "",
-          image4: ""
+          redirect: "",
         },
-        social: {
-          facebook: "",
-          instagram: "",          
+        period: {
+          start: "",
+          end: ""
         },
-        maps: "",
-        website: ""      
+        tags: ["Wigoo", "Voucher", "Desconto", "Promoção"],
+        observations:"",
+        unique: true    
       }, 
-      category: {
-        id: "",
-        name: ""
-      },         
-      fieldsText: {
-
-      },    
-      new: this.props.match.params.action === "add" ? true : false 
+      categories: [
+        { id: "Restaurante", text: "Restaurante" },
+        { id: "Academia", text: "Academia" },
+        { id: "Vestuário", text: "Vestuário" },
+        { id: "Serviços", text: "Serviços" },
+        { id: "Cursos", text: "Cursos" },
+        { id: "Clínica", text: "Clínica" }
+      ],  
+      accounts: [], 
+      new: this.props.match.params.action === "add" ? true : false ,
+      newObjectId: new ObjectID()
     };
     
     this.handleChange = this.handleChange.bind(this);
@@ -129,15 +140,21 @@ class Profile extends React.Component {
     this.fileInputImage3 = React.createRef();    
     this.fileInputImage3Label = React.createRef();    
     this.fileInputImage4 = React.createRef();    
-    this.fileInputImage4Label = React.createRef();    
+    this.fileInputImage4Label = React.createRef();        
   }
 
   //get data from API
-  componentDidMount(){        
+  componentDidMount(){      
+    moment.locale('pt-BR');     
+    
     if(this.props.match.params.id) 
-      this.getData();            
-  }
+      this.getData(); 
+      
+    this.getDataAccount()     
+        
 
+  }  
+  
   getData = () => {           
     api.get(`/campaign/${this.props.match.params.id}`)
     .then(function (response) {
@@ -145,9 +162,13 @@ class Profile extends React.Component {
       this.setState(prevState => ({
         campaign: {   
           ...prevState.campaign,
-          ...response.data               
+          ...response.data,  
+          period: {
+            start: moment(response.data.period.start),
+            end: moment(response.data.period.end),
+          }             
         }
-      }));         
+      }));              
     }.bind(this))
     .catch(function (error) {
       // handle error
@@ -160,8 +181,8 @@ class Profile extends React.Component {
   }
 
   postData = campaignData => {
-    console.log("Inseriu mais um registro");       
-    delete campaignData._id;    
+    console.log("Inseriu mais um registro");        
+    campaignData._id = this.newObjectId;    
     api.post("/campaign", {
       ...campaignData
     })
@@ -202,7 +223,44 @@ class Profile extends React.Component {
     api.delete(`/campaign/${this.state.campaign._id}`)
     .then(function (response) {
       console.log(response);
-      this.props.history.push('/admin/clientes');
+      this.props.history.push('/admin/campanhas/cupons');
+    }.bind(this))
+    .catch(function (error) {
+      console.log(error);
+      this.errorAlert();
+    }.bind(this));
+  }
+
+
+  getDataAccount = () => {           
+    api.get(`/account/select`)
+    .then(function (response) {
+      // handle success     
+      let itemsAccount = [];
+      response.data.map((item) =>
+        itemsAccount.push({ id: item._id, text: item.name})
+      );           
+      this.setState({ accounts: itemsAccount });         
+    }.bind(this))
+    .catch(function (error) {
+      // handle error
+      console.log(error);
+    })
+    .finally(function () {
+      // always executed
+      console.log("end GET Account");
+    });
+  }
+
+
+  putDataImage = imageUpload => {
+    console.log("Adicionou imagem");      
+    api.put(`/image/${this.state.campaign._id}`, {
+      imageUpload
+    })
+    .then(function (response) {
+      console.log(response);
+      this.confirmedAlert()
     }.bind(this))
     .catch(function (error) {
       console.log(error);
@@ -233,33 +291,74 @@ class Profile extends React.Component {
   }
 
   handleSelect(event){    
-    const id = event.target.value;    
-    const value = event.target.options[event.target.value -1].label;    
+    const id = event.params.data.id;           
+    const value = event.params.data.text;  
+    
+    console.log(id);
+    console.log(value);
+    console.log(event);
 
-    this.setState(prevState => ({
-      campaign: {   
-        ...prevState.campaign,     
-        category: {
-          id: id,
-          name: value
-        }
-      }
-    }));
+    switch(event.target.id) {
+      case 'select-account':
+        this.setState(prevState => ({
+          campaign: {   
+            ...prevState.campaign,     
+            account: {
+              id: id,
+              name: value
+            }
+          }
+        }));
+        return
+      case 'select-category':
+        this.setState(prevState => ({
+          campaign: {   
+            ...prevState.campaign,     
+            category: {
+              id: id,
+              name: value
+            }
+          }
+        }));  
+        console.log(this.state.campaign);      
+        return
+      default:
+        return
+    }
 
-    this.setState({ 
-      category: {
-        id: id
-      }
-    })    
+    
   }
 
   handleImage(e, typeImage) {
 
     let reader = new FileReader();
-    let file = e.target.files[0];
+    // let file = e.target.files[0];
 
+    const file = new Blob([e.target.files[0]], { type:  'image/png'}); // kind of works and choses stream as content type of file (not request)
+    // const file = new Blob([files[0]], { type: 'image/jpg' });// WORKS much better (if you know what MIME type you want.
+
+    let formData = new FormData();
+    formData.append('id', new ObjectID().toHexString());
+    formData.append('file', file, file.fileName);
+
+    console.log(file);
+    console.log(formData);
 
     switch(typeImage) {
+      case 'teste':
+        api.post("/image", formData, {
+          headers: {
+            "Content-Type": `multipart/form-data; boundary=${formData._boundary}`,
+          }
+        })
+        .then(function (response) {
+          console.log(response);
+        })
+        .catch(function (error) {
+          console.log(error);
+        }); 
+
+        return;
       case 'logo':
         reader.onloadend = () => {          
           this.setState(prevState => ({
@@ -362,6 +461,15 @@ class Profile extends React.Component {
       }
     }));    
   }
+
+  handleTagsinput = tags => {    
+    this.setState(prevState => ({
+      campaign: {   
+        ...prevState.campaign,   
+        tags: tags   
+      }
+    })); 
+  };
 
   createMarkup() {
     return {
@@ -500,7 +608,7 @@ class Profile extends React.Component {
         {this.state.new ? (
           <SimpleHeader name="Novo Cupom" parentName="Cupom" />
         ) : (
-          <BackHeader name={this.state.campaign.name} parentName="Cupom" parentPath="/admin/clientes" />
+          <BackHeader name={this.state.campaign.name} parentName="Cupom" parentPath="/admin/campanhas/cupons" />
         )}        
         <Form onSubmit={this.handleSubmit}> 
           <Container className="mt--6" fluid>
@@ -793,21 +901,14 @@ class Profile extends React.Component {
                                 Cliente
                               </label>
                               <Select2
-                                  value={ this.state.category.id }
+                                  value={ this.state.campaign.account.id }
                                   className="form-control"
-                                  defaultValue="Outros"                                  
+                                  defaultValue="Outros" 
+                                  id="select-account"                                 
                                   options={{
-                                    placeholder: "Cliente",
-                                    tags: true
+                                    placeholder: "Cliente",                                    
                                   }}
-                                  data={[
-                                    { id: "1", text: "Cliente 1" },
-                                    { id: "2", text: "Cliente 2" },
-                                    { id: "3", text: "Cliente 3" },
-                                    { id: "4", text: "Cliente 4" },
-                                    { id: "5", text: "Cliente 5" },
-                                    { id: "6", text: "Cliente 6" }
-                                  ]}
+                                  data={this.state.accounts}
                                   onSelect={event => this.handleSelect(event)}                                  
                                 />
                             </FormGroup>
@@ -876,25 +977,169 @@ class Profile extends React.Component {
                                 Categoria
                               </label>
                               <Select2
-                                  value={ this.state.category.id }
+                                  value={ this.state.campaign.category.id }
                                   className="form-control"
-                                  defaultValue="Outros"                                  
+                                  defaultValue="Outros"   
+                                  id='select-category'                               
                                   options={{
                                     placeholder: "Categoria",
                                     tags: true
                                   }}
-                                  data={[
-                                    { id: "1", text: "Restaurante" },
-                                    { id: "2", text: "Academia" },
-                                    { id: "3", text: "Vestuário" },
-                                    { id: "4", text: "Serviços" },
-                                    { id: "5", text: "Cursos" },
-                                    { id: "6", text: "Clínica" }
-                                  ]}
+                                  data={this.state.categories}
                                   onSelect={event => this.handleSelect(event)}                                  
                                 />
                             </FormGroup>
                             
+                          </Col>
+                        </Row>
+                        <Row>
+                          <Col xs={6}>
+                            <FormGroup>
+                              <label
+                                className="form-control-label"                              
+                              >
+                                Data inicial
+                              </label>
+                              <InputGroup className="input-group-alternative">
+                                <InputGroupAddon addonType="prepend">
+                                  <InputGroupText>
+                                    <i className="ni ni-calendar-grid-58" />
+                                  </InputGroupText>
+                                </InputGroupAddon>
+                                <ReactDatetime
+                                  inputProps={{
+                                    placeholder: "Data inicial"
+                                  }}                                  
+                                  value={this.state.campaign.period.start}                                  
+                                  timeFormat={false}
+                                  renderDay={(props, currentDate, selectedDate) => {
+                                    let classes = props.className;
+                                    if (
+                                      this.state.campaign.period.start &&
+                                      this.state.campaign.period.end &&
+                                      this.state.campaign.period.start._d + "" === currentDate._d + ""
+                                    ) {
+                                      classes += " start-date";
+                                    } else if (
+                                      this.state.campaign.period.start &&
+                                      this.state.campaign.period.end &&
+                                      new Date(this.state.campaign.period.start._d + "") <
+                                        new Date(currentDate._d + "") &&
+                                      new Date(this.state.campaign.period.end._d + "") >
+                                        new Date(currentDate._d + "")
+                                    ) {
+                                      classes += " middle-date";
+                                    } else if (
+                                      this.state.campaign.period.end &&
+                                      this.state.campaign.period.end._d + "" === currentDate._d + ""
+                                    ) {
+                                      classes += " end-date";
+                                    }
+                                    return (
+                                      <td {...props} className={classes}>
+                                        {currentDate.date()}
+                                      </td>
+                                    );
+                                  }}
+                                  isValidDate={(current) => {
+                                      return current.isAfter( ReactDatetime.moment().subtract(1, 'day') );                                         
+                                    }
+                                  }
+                                  onChange={e => {
+                                      console.log(e);                                 
+                                      console.log(this.state.campaign.period.start);                                 
+                                      console.log(this.state.campaign.period.end);           
+                                      this.setState({ startDate: e});
+                                      // const dateL = moment(e._d).format('YYYY-MM-D');
+                                      const dateL = e;
+                                      this.setState(prevState => ({
+                                        campaign: {   
+                                          ...prevState.campaign, 
+                                          period: {
+                                            ...prevState.campaign.period,
+                                            start: dateL
+                                          }
+                                        }
+                                      }));                                                                 
+                                      console.log(this.state.campaign.period);                                 
+                                    }
+                                  }
+                                />
+                              </InputGroup>
+                            </FormGroup>
+                          </Col>
+                          <Col xs={6}>
+                            <label
+                              className="form-control-label"                              
+                            >
+                              Data final
+                            </label>
+                            <FormGroup>
+                              <InputGroup className="input-group-alternative">
+                                <InputGroupAddon addonType="prepend">
+                                  <InputGroupText>
+                                    <i className="ni ni-calendar-grid-58" />
+                                  </InputGroupText>
+                                </InputGroupAddon>
+                                <ReactDatetime
+                                  inputProps={{
+                                    placeholder: "Data final"
+                                  }}
+                                  value={this.state.campaign.period.end}  
+                                  timeFormat={false}
+                                  renderDay={(props, currentDate, selectedDate) => {
+                                    let classes = props.className;
+                                    if (
+                                      this.state.campaign.period.start &&
+                                      this.state.campaign.period.end &&
+                                      this.state.campaign.period.start._d + "" === currentDate._d + ""
+                                    ) {
+                                      classes += " start-date";
+                                    } else if (
+                                      this.state.campaign.period.start &&
+                                      this.state.campaign.period.end &&
+                                      new Date(this.state.campaign.period.start._d + "") <
+                                        new Date(currentDate._d + "") &&
+                                      new Date(this.state.campaign.period.end._d + "") >
+                                        new Date(currentDate._d + "")
+                                    ) {
+                                      classes += " middle-date";
+                                    } else if (
+                                      this.state.campaign.period.end &&
+                                      this.state.campaign.period.end._d + "" === currentDate._d + ""
+                                    ) {
+                                      classes += " end-date";
+                                    }
+                                    return (
+                                      <td {...props} className={classes}>
+                                        {currentDate.date()}
+                                      </td>
+                                    );
+                                  }}
+                                  isValidDate={(current) => {
+                                      return current.isAfter( ReactDatetime.moment().subtract(1, 'day') );                                         
+                                    }
+                                  }
+                                  onChange={e => {
+                                      this.setState({ endDate: e });
+                                      // const dateL = moment(e._d).format('YYYY-MM-D');
+                                      const dateL = e;
+                                      this.setState(prevState => ({
+                                        campaign: {   
+                                          ...prevState.campaign, 
+                                          period: {
+                                            ...prevState.campaign.period,
+                                            end: dateL
+                                          }
+                                        }
+                                      }));  
+
+                                      console.log(this.state.campaign.period)
+                                    } 
+                                  }
+                                />
+                              </InputGroup>
+                            </FormGroup>
                           </Col>
                         </Row>
                         <Row>
@@ -957,7 +1202,7 @@ class Profile extends React.Component {
                                   type="file"
                                   name="image1"
                                   ref={this.fileInputImage1}                                                                 
-                                  onChange={event => this.handleImage(event, "image1")}
+                                  onChange={event => this.handleImage(event, "teste")}
                                 />
                                 <label className="custom-file-label" htmlFor="input-image1" ref={this.fileInputImagem1Label}>
                                   Selecionar Imagem1
@@ -1098,6 +1343,52 @@ class Profile extends React.Component {
                           
                         </Row>
                         <Row>
+                          <Col lg="12">
+                            <FormGroup>
+                              <label
+                                  className="form-control-label"
+                                  htmlFor="input-tags"
+                                >
+                                  Tags
+                              </label><br/>
+                              <TagsInput
+                                onlyUnique
+                                className="bootstrap-tagsinput"
+                                onChange={this.handleTagsinput}
+                                value={this.state.campaign.tags}
+                                tagProps={{ className: "tag badge mr-1" }}
+                                inputProps={{
+                                  className: "",
+                                  placeholder: ""
+                                }}
+                              />
+                            </FormGroup>
+                            
+                          </Col>
+                          <Col lg="12">
+                            <FormGroup>
+                              <label
+                                  className="form-control-label"
+                                  htmlFor="input-unique"
+                                >
+                                  Voucher Único
+                              </label><br/>
+                              <label className="custom-toggle">
+                                <input                                    
+                                  type="checkbox" 
+                                  name="unique"
+                                  checked={this.state.campaign.unique}                                
+                                  onChange={this.handleChange}
+                                />
+                                <span
+                                  className="custom-toggle-slider rounded-circle"
+                                  data-label-off="off"
+                                  data-label-on="on"
+                                />
+                              </label>
+                            </FormGroup>
+                            
+                          </Col>
                           <Col lg="12">
                             <FormGroup>
                               <label

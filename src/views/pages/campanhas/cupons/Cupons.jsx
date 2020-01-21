@@ -25,6 +25,8 @@ import paginationFactory from "react-bootstrap-table2-paginator";
 import ToolkitProvider, { Search } from "react-bootstrap-table2-toolkit";
 // react component used to create sweet alerts
 import ReactBSAlert from "react-bootstrap-sweetalert";
+import * as moment from 'moment';
+import 'moment/locale/pt-br';
 // reactstrap components
 import {
   Button,
@@ -72,22 +74,6 @@ const pagination = paginationFactory({
 });
 
 
-// const selectRow = {
-//   mode: 'checkbox',
-//   clickToSelect: true,
-//   clickToExpand: true
-// };
-
-// const expandRow = {
-//   showExpandColumn: true,
-//   renderer: row => (
-//     <div>
-//       <p>{ `This Expand row is belong to rowKey ${row}` }</p>
-//       <p>You can render anything here, also you can add additional data on every row object</p>
-//       <p>expandRow.renderer callback will pass the origin row object to you</p>
-//     </div>
-//   )
-// };
 
 const { SearchBar } = Search;
 
@@ -123,10 +109,11 @@ class ReactBSTables extends React.Component {
   //get data from API
   componentDidMount(){
     this.loadData();
+    moment.locale('pt-BR');
   }
 
   loadData = async () => {
-    const response = await api.get("/account");
+    const response = await api.get("/campaign");
     this.setState({
       tableData: response.data
     })    
@@ -135,24 +122,15 @@ class ReactBSTables extends React.Component {
 
   rankFormatter = (cell, row, rowIndex, formatExtraData) => {
     return (
-      <>
-        {/* {console.log(cell)} */}
-        {/* {console.log(row)} */}
-        {/* {console.log(rowIndex)} */}
+      <>        
         <i className={ formatExtraData[cell] } />
         <Button
             className="buttons-copy buttons-html5"
             color="default"
             size="sm"
             id="edit-tooltip"   
-            to={`/admin/campanhas/cupons/edit/${row._id}`} 
-            // to="/admin/clientes/edit"
-            tag={Link}    
-            // onClick={() => {
-            //     this.toggleModal("exampleModal")
-            //     this.setState({idSelected: row._id})
-            //   }
-            // }     
+            to={`/admin/campanhas/cupons/edit/${row._id}`}             
+            tag={Link}       
           >
             <span>Editar</span>
         </Button>  
@@ -171,6 +149,14 @@ class ReactBSTables extends React.Component {
         </Button>  
       </>
 
+    );
+  }
+
+  dateFormatter = (cell, row, rowIndex, formatExtraData) => {
+    return (
+      <>       
+       {moment(moment(cell)._d).format('YYYY/MM/DD') }
+      </>
     );
   }
 
@@ -223,11 +209,11 @@ class ReactBSTables extends React.Component {
   };
 
 
-  deleteData = (idAccount) => {
+  deleteData = (id) => {
     console.log("Deletou registro");    
-    api.delete(`/account/${idAccount}`)
+    api.delete(`/campaign/${id}`)
     .then(function (response) {
-      console.log(response);
+      console.log(response); 
       this.confirmedAlert()
     }.bind(this))
     .catch(function (error) {
@@ -323,8 +309,15 @@ class ReactBSTables extends React.Component {
                       sort: true
                     },
                     {
-                      dataField: "email",
-                      text: "Email",
+                      dataField: "period.start",
+                      text: "Data inicial",
+                      formatter: this.dateFormatter,
+                      sort: true
+                    },
+                    {
+                      dataField: "period.end",
+                      text: "Data Final",
+                      formatter: this.dateFormatter,
                       sort: true
                     },
                     {

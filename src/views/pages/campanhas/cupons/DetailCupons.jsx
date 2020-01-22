@@ -34,9 +34,7 @@ import {
   Input,  
   InputGroupAddon,
   InputGroupText,
-  InputGroup,
-  ListGroupItem,
-  ListGroup,
+  InputGroup,  
   // Progress,
   Container,
   Row,
@@ -715,46 +713,6 @@ class Profile extends React.Component {
             <Row>
               <Col className="order-xl-2" xl="4">
 
-                <Card>
-                  <CardHeader>
-                    <h5 className="h3 mb-0">Campanhas Ativas</h5>
-                  </CardHeader>
-
-                  <CardBody>
-                    <ListGroup className="list my--3" flush>
-                      <ListGroupItem className="px-0">
-                        <Row className="align-items-center">
-                          <Col className="col-auto">
-                            <a
-                              className="avatar rounded-circle"
-                              href="#1"
-                              onClick={e => e.preventDefault()}
-                            >
-                              <img
-                                alt="..."
-                                src={require("assets/img/theme/placeholder.png")}
-                              />
-                            </a>
-                          </Col>
-                          <div className="col ml--2">
-                            <h4 className="mb-0">
-                              <a href="#1" onClick={e => e.preventDefault()}>
-                                Campanha Teste
-                              </a>
-                            </h4>
-                            <span className="text-success">●</span>{" "}
-                            <small>Online</small>
-                          </div>
-                          <Col className="col-auto">
-                            <Button color="primary" size="sm" type="button">
-                              Ver
-                            </Button>
-                          </Col>
-                        </Row>
-                      </ListGroupItem>                      
-                    </ListGroup>
-                  </CardBody>
-                </Card>
 
                 <Card className="card-profile sticky-top">                  
                   {this.state.campaign.background !== undefined && this.state.campaign.background !== "" ? (

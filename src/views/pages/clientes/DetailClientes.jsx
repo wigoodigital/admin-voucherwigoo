@@ -49,6 +49,9 @@ import Select2 from "react-select2-wrapper";
 // react plugin that creates text editor
 import ReactQuill from "react-quill";
 
+// react library for routing
+import { Link } from "react-router-dom";
+
 
 import { ObjectID } from 'bson';
 import FormData from 'form-data'
@@ -104,7 +107,17 @@ class Profile extends React.Component {
         logo: false,
         bg: false
       }, 
-      campaigns: [{}],
+      campaigns: [{
+        _id: "",
+        name: "",
+        utm: "",
+        images: {
+          image1: "",
+          image2: "",
+          image3: "",
+          image4: ""
+        }
+      }],
       newObjectId: new ObjectID(),
       new: this.props.match.params.action === "add" ? true : false 
     };
@@ -160,6 +173,7 @@ class Profile extends React.Component {
           ...response.data               
         }
       });    
+      console.log(response.data);
       console.log(this.state.campaigns);     
     }.bind(this))
     .catch(function (error) {
@@ -538,13 +552,9 @@ class Profile extends React.Component {
 
     
     const campaigns = this.state.campaigns;
-    Object.entries(campaigns).map((i, campaign) => {
-      console.log(i);
-      console.log(campaign);
-    });
     const listItems = (
       <>     
-        {Object.entries(campaigns).map((campaign, i) =>  
+        {Object.values(campaigns).map((campaign, i) =>  
           <ListGroupItem className="px-0">
             <Row className="align-items-center">
               <Col className="col-auto">
@@ -554,8 +564,9 @@ class Profile extends React.Component {
                   onClick={e => e.preventDefault()}
                 >
                   <img
-                    alt="..."                
-                    src={cloudinaryCore.url(campaign.logo)}
+                    alt="..."    
+                    style={{ objectFit: "cover", height: "100%" }}            
+                    src={ campaign.images.image1 !== undefined ? cloudinaryCore.url(campaign.images.image1) : require("assets/img/theme/placeholder.png")}
                   />
                 </a>
               </Col>
@@ -569,7 +580,7 @@ class Profile extends React.Component {
                 <small>Online</small>
               </div>
               <Col className="col-auto">
-                <Button color="primary" size="sm" type="button">
+                <Button color="primary" size="sm" type="button" to={`/admin/campanhas/cupons/edit/${campaign._id}`} tag={Link}>
                   Ver
                 </Button>
               </Col>
@@ -607,37 +618,7 @@ class Profile extends React.Component {
                   </CardHeader>
 
                   <CardBody>
-                    <ListGroup className="list my--3" flush>
-                      <ListGroupItem className="px-0">
-                        <Row className="align-items-center">
-                          <Col className="col-auto">
-                            <a
-                              className="avatar rounded-circle"
-                              href="#1"
-                              onClick={e => e.preventDefault()}
-                            >
-                              <img
-                                alt="..."
-                                src={require("assets/img/theme/placeholder.png")}
-                              />
-                            </a>
-                          </Col>
-                          <div className="col ml--2">
-                            <h4 className="mb-0">
-                              <a href="#1" onClick={e => e.preventDefault()}>
-                                Campanha Teste
-                              </a>
-                            </h4>
-                            <span className="text-success">●</span>{" "}
-                            <small>Online</small>
-                          </div>
-                          <Col className="col-auto">
-                            <Button color="primary" size="sm" type="button">
-                              Ver
-                            </Button>
-                          </Col>
-                        </Row>
-                      </ListGroupItem>                                     
+                    <ListGroup className="list my--3" flush>                                  
 
                      {this.renderCampaigns()} 
 

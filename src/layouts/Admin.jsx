@@ -115,7 +115,7 @@ class Admin extends React.Component {
             brandText={this.getBrandText(this.props.location.pathname)}
           />
           <Switch>{this.getRoutes(routesAll)}</Switch>
-          <AdminFooter />
+          {/* <AdminFooter /> */}
         </div>
         {this.state.sidenavOpen ? (
           <div className="backdrop d-xl-none" onClick={this.toggleSidenav} />

@@ -209,7 +209,7 @@ class Sidebar extends React.Component {
             <Nav navbar>{this.createLinks(routes)}</Nav>
             <hr className="my-3" />            
             <Nav className="mb-md-3" navbar>
-              <NavItem>
+              {/* <NavItem>
                 <NavLink
                   href="https://demos.creative-tim.com/argon-dashboard-pro-react/#/documentation/overview?ref=adpr-sidebar"
                   target="_blank"
@@ -217,10 +217,10 @@ class Sidebar extends React.Component {
                   <i className="ni ni-spaceship" />
                   <span className="nav-link-text">Ajuda</span>
                 </NavLink>
-              </NavItem>
+              </NavItem> */}
               <NavItem>
                 <NavLink
-                  href="https://demos.creative-tim.com/argon-dashboard-pro-react/#/documentation/colors?ref=adpr-sidebar"
+                  href="https://wigoo-delivery.herokuapp.com/"
                   target="_blank"
                 >
                   <i className="ni ni-palette" />

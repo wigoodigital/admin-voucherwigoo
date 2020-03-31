@@ -41,8 +41,10 @@ ReactDOM.render(
     <Switch>
       <Route path="/admin" render={props => <AdminLayout {...props} />} />
       <Route path="/auth" render={props => <AuthLayout {...props} />} />
-      <Route path="/" render={props => <IndexView {...props} />} />
-      <Redirect from="*" to="/" />
+      <Route path="/">
+        <Redirect from="*" to="/admin/campanhas/cupons" />
+      </Route>
+      <Redirect from="*" to="/admin" />
     </Switch>
   </BrowserRouter>,
   document.getElementById("root")

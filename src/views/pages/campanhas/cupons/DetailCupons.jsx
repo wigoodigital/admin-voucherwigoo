@@ -114,7 +114,14 @@ class Profile extends React.Component {
         },
         tags: ["Wigoo", "Voucher", "Desconto", "Promoção"],
         observations:"",
-        unique: true    
+        unique: true,
+        saleVoucher: false,  
+        price: {
+          grossAmount: "0,00",
+          discountAmount: "0,00"            
+        },
+        installment: false,
+        units: ""          
       }, 
       categories: [
         { id: "Restaurante", text: "Restaurante" },
@@ -125,6 +132,10 @@ class Profile extends React.Component {
         { id: "Clínica", text: "Clínica" }
       ],  
       accounts: [], 
+      price: {
+        grossAmount: 0,
+        discountAmount: 0  
+      },
       new: this.props.match.params.action === "add" ? true : false ,
       newObjectId: new ObjectID(),
       loading:{
@@ -141,8 +152,10 @@ class Profile extends React.Component {
     this.handleSubmit = this.handleSubmit.bind(this);
     this.handleImage = this.handleImage.bind(this);
     this.handleVoucher = this.handleVoucher.bind(this);
+    this.handlePrice = this.handlePrice.bind(this);
     this.handleSocial = this.handleSocial.bind(this);
     this.handleTextEditor = this.handleTextEditor.bind(this);    
+    this.handleTextEditorLocal = this.handleTextEditorLocal.bind(this);    
     this.fileInputLogo = React.createRef();    
     this.fileInputLogoLabel = React.createRef();    
     this.fileInputImage1 = React.createRef();    
@@ -249,10 +262,12 @@ class Profile extends React.Component {
     .then(function (response) {
       // handle success     
       let itemsAccount = [];
+      console.log(response);
       response.data.map((item) =>
-        itemsAccount.push({ id: item._id, text: item.name})
+        itemsAccount.push({ id: item._id, text: item.name, units: item.units})
       );           
-      this.setState({ accounts: itemsAccount });         
+      this.setState({ accounts: itemsAccount });        
+      console.log(this.state.accounts) 
     }.bind(this))
     .catch(function (error) {
       // handle error
@@ -287,8 +302,7 @@ class Profile extends React.Component {
     const target = event.target;
     const value = target.type === 'checkbox' ? target.checked : target.value;
     const name = target.name;
-
-    console.log(value);
+    
 
 
     this.setState(prevState => ({
@@ -297,8 +311,7 @@ class Profile extends React.Component {
         [name]: value
       }
     }));
-
-    console.log(this.state.campaign);
+    
     
   }
 
@@ -306,19 +319,24 @@ class Profile extends React.Component {
     const id = event.params.data.id;           
     const value = event.params.data.text;  
     
+    
     console.log(id);
     console.log(value);
-    console.log(event);
+       
+  
 
     switch(event.target.id) {
       case 'select-account':
+        const units = event.params.data.element.attributes[1].value;  
+        console.log(units); 
         this.setState(prevState => ({
           campaign: {   
             ...prevState.campaign,     
             account: {
               id: id,
-              name: value
-            }
+              name: value,              
+            },
+            units
           }
         }));
         return
@@ -328,7 +346,7 @@ class Profile extends React.Component {
             ...prevState.campaign,     
             category: {
               id: id,
-              name: value
+              name: value,              
             }
           }
         }));  
@@ -524,6 +542,16 @@ class Profile extends React.Component {
     }));
         
   };
+  
+  handleTextEditorLocal = value => {
+    this.setState(prevState => ({
+      campaign: {   
+        ...prevState.campaign, 
+        units: value
+      }
+    }));
+        
+  };
 
   handleVoucher(event) {                    
     const target = event.target;
@@ -535,6 +563,22 @@ class Profile extends React.Component {
         ...prevState.campaign,   
         voucher: {
           ...prevState.campaign.voucher, 
+          [name]: value
+        }        
+      }
+    }));    
+  }
+  
+  handlePrice(event) {                    
+    const target = event.target;
+    const value = target.type === 'checkbox' ? target.checked : target.value;
+    const name = target.name;;
+    
+    this.setState(prevState => ({
+      campaign: {   
+        ...prevState.campaign,   
+        price: {
+          ...prevState.campaign.price, 
           [name]: value
         }        
       }
@@ -699,6 +743,7 @@ class Profile extends React.Component {
   render() {
 
     const cloudinaryCore = new cloudinary.Cloudinary({cloud_name: 'djmiq2iq6'});
+
     return (
       <>
         {this.state.alert}
@@ -1467,6 +1512,94 @@ class Profile extends React.Component {
                             <FormGroup>
                               <label
                                   className="form-control-label"
+                                  htmlFor="input-saleVoucher"
+                                >
+                                  Compra Online
+                              </label><br/>
+                              <label className="custom-toggle">
+                                <input                                    
+                                  type="checkbox" 
+                                  name="saleVoucher"
+                                  checked={this.state.campaign.saleVoucher}                                
+                                  onChange={this.handleChange}
+                                />
+                                <span
+                                  className="custom-toggle-slider rounded-circle"
+                                  data-label-off="off"
+                                  data-label-on="on"
+                                />
+                              </label>
+                            </FormGroup>
+                            
+                          </Col>   
+                          { this.state.campaign.saleVoucher &&  
+                            <>                                  
+                              <Col md="6">
+                                <FormGroup>
+                                  <label
+                                    className="form-control-label"
+                                    htmlFor="input-grossAmount"
+                                  >
+                                    Preço normal
+                                  </label>
+                                  <Input                                
+                                    id="input-grossAmount"
+                                    placeholder="0,00"
+                                    type="text"
+                                    name="grossAmount"
+                                    value={this.state.campaign.price.grossAmount}
+                                    onChange={this.handlePrice}
+                                  />
+                                </FormGroup>
+                              </Col>
+                              <Col md="6">
+                                <FormGroup>
+                                  <label
+                                    className="form-control-label"
+                                    htmlFor="input-discountAmount"
+                                  >
+                                    Preço com desconto
+                                  </label>
+                                  <Input                                
+                                    id="input-discountAmount"
+                                    placeholder="0,00"
+                                    type="text"
+                                    name="discountAmount"
+                                    value={this.state.campaign.price.discountAmount}
+                                    onChange={this.handlePrice}
+                                  />
+                                </FormGroup>
+                              </Col>   
+                              <Col lg="12">
+                                <FormGroup>
+                                  <label
+                                      className="form-control-label"
+                                      htmlFor="input-installment"
+                                    >
+                                      Parcelamento
+                                  </label><br/>
+                                  <label className="custom-toggle">
+                                    <input                                    
+                                      type="checkbox" 
+                                      name="installment"
+                                      checked={this.state.campaign.installment}                                
+                                      onChange={this.handleChange}
+                                    />
+                                    <span
+                                      className="custom-toggle-slider rounded-circle"
+                                      data-label-off="off"
+                                      data-label-on="on"
+                                    />
+                                  </label>
+                                </FormGroup>
+                                
+                              </Col> 
+                            </> 
+                          }                      
+                          <Col lg="12">
+                            <FormGroup>
+                              <label
+                                  className="form-control-label"
                                   htmlFor="input-unique"
                                 >
                                   Voucher Único
@@ -1658,12 +1791,42 @@ class Profile extends React.Component {
                               />
                             </FormGroup>
                           </Col>
-                        </Row>
+                        </Row>                        
                       </div>
                       <hr className="my-4" />
 
                       <h6 className="heading-small text-muted mb-4">Extras</h6>
                       <div className="pl-lg-4">
+                        <Row>
+                          <Col lg="12">
+                            <label
+                              className="form-control-label"                              
+                            >
+                              Unidades
+                            </label>
+                            <FormGroup>
+                              <ReactQuill
+                                value={this.state.campaign.units}
+                                onChange={this.handleTextEditorLocal}
+                                theme="snow"
+                                modules={{
+                                  toolbar: [
+                                    ["bold", "italic"],
+                                    ["link", "blockquote", "code", "image"],
+                                    [
+                                      {
+                                        list: "ordered"
+                                      },
+                                      {
+                                        list: "bullet"
+                                      }
+                                    ]
+                                  ]
+                                }}
+                              />
+                            </FormGroup>                            
+                          </Col>
+                        </Row>
                         <FormGroup>
                           <label className="form-control-label">Observações</label>
                           <Input

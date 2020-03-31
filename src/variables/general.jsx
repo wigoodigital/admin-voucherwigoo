@@ -23,7 +23,8 @@ var y = today.getFullYear();
 var m = today.getMonth();
 var d = today.getDate();
 
-const BASE_URL = "https://voucherwigoo.com.br"
+// const BASE_URL = "https://voucherwigoo.com.br"
+const BASE_URL = "http://localhost:3000"
 
 const events = [
   {

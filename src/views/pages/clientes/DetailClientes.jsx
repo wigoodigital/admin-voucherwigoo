@@ -103,6 +103,7 @@ class Profile extends React.Component {
         appIos: "",
         phone: "",
         emailPagseguro: "",
+        tokenPagseguro: "",
         units: "",        
         subAccounts: []     
       }, 
@@ -1148,8 +1149,26 @@ class Profile extends React.Component {
                                 id="input-email"
                                 placeholder="example@example.com"
                                 type="email"
-                                name="email"
+                                name="emailPagseguro"
                                 value={this.state.account.emailPagseguro}
+                                onChange={this.handleChange}
+                              />
+                            </FormGroup>
+                          </Col>
+                          <Col lg="12">
+                            <FormGroup>
+                              <label
+                                className="form-control-label"
+                                htmlFor="input-email"
+                              >
+                                Token Pagseguro
+                              </label>
+                              <Input
+                                id="input-token"
+                                placeholder="8E86BFCB5168439382865BBB5897B900"
+                                type="text"
+                                name="tokenPagseguro"
+                                value={this.state.account.tokenPagseguro}
                                 onChange={this.handleChange}
                               />
                             </FormGroup>

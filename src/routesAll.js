@@ -47,6 +47,7 @@ import Usuarios from "views/pages/administrador/usuarios/Usuarios.jsx";
 import Bases from "views/pages/administrador/bases/Bases.jsx";
 import Cupons from "views/pages/campanhas/cupons/Cupons.jsx";
 import DetailCupons from "views/pages/campanhas/cupons/DetailCupons.jsx";
+import Pedidos from "views/pages/campanhas/pedidos/Pedidos.jsx";
 import Eventos from "views/pages/campanhas/eventos/Eventos.jsx";
 import Inicio from "views/pages/overview/Inicio.jsx";
 import Campanhas from "views/pages/overview/Campanhas.jsx";
@@ -339,7 +340,14 @@ const routes = [
         name: "Eventos",
         component: Eventos,
         layout: "/admin"
-      }
+      },
+      {
+        path: "/campanhas/pedidos",
+        name: "Pedidos",
+        component: Pedidos,
+        layout: "/admin"
+      },
+
     ]
   },
   // Clientes - Start

@@ -21,27 +21,27 @@ import classnames from "classnames";
 import PropTypes from "prop-types";
 // reactstrap components
 import {
-  Collapse,
-  DropdownMenu,
-  DropdownItem,
-  UncontrolledDropdown,
-  DropdownToggle,
-  FormGroup,
-  Form,
-  Input,
-  InputGroupAddon,
-  InputGroupText,
-  InputGroup,
-  ListGroupItem,
-  ListGroup,
-  Media,
+  // Collapse,
+  // DropdownMenu,
+  // DropdownItem,
+  // UncontrolledDropdown,
+  // DropdownToggle,
+  // FormGroup,
+  // Form,
+  // Input,
+  // InputGroupAddon,
+  // InputGroupText,
+  // InputGroup,
+  // ListGroupItem,
+  // ListGroup,
+  // Media,
   Navbar,
-  NavItem,
-  NavLink,
-  Nav,
-  Container,
-  Row,
-  Col
+  // NavItem,
+  // NavLink,
+  // Nav,
+  // Container,
+  // Row,
+  // Col
 } from "reactstrap";
 
 class AdminNavbar extends React.Component {

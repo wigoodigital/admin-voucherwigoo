@@ -99,9 +99,12 @@ class Profile extends React.Component {
         maps: "",
         website: "",
         ifood: "",
+        appAndroid: "",
+        appIos: "",
         phone: "",
         emailPagseguro: "",
-        units: ""      
+        units: "",        
+        subAccounts: ["5e1f0726d1c5be03151a5de5", "5e1f0726d1c5be03151a5de6"]     
       }, 
       category: {
         id: "",
@@ -122,6 +125,7 @@ class Profile extends React.Component {
           image4: ""
         }
       }],
+      accounts:[],
       newObjectId: new ObjectID(),
       new: this.props.match.params.action === "add" ? true : false 
     };
@@ -144,6 +148,7 @@ class Profile extends React.Component {
       this.getData(); 
       this.getDataCampaigns();
     }
+    this.getDataAccount();
                
   }
 
@@ -190,6 +195,29 @@ class Profile extends React.Component {
       console.log("end GET");
     });
   }
+
+  getDataAccount = () => {           
+    api.get(`/account/select`)
+    .then(function (response) {
+      // handle success     
+      let itemsAccount = [];
+      console.log(response);
+      response.data.map((item) =>
+        itemsAccount.push({ id: item._id, text: item.name, units: item.units})
+      );           
+      this.setState({ accounts: itemsAccount });        
+      console.log(this.state.accounts) 
+    }.bind(this))
+    .catch(function (error) {
+      // handle error
+      console.log(error);
+    })
+    .finally(function () {
+      // always executed
+      console.log("end GET Account");
+    });
+  }
+
 
 
   postData = accountData => {
@@ -466,6 +494,63 @@ class Profile extends React.Component {
     }
 
   }
+
+  
+
+
+  handleChangeSubAccount(event, index){
+
+    const id = event.params.data.id;           
+    const value = event.params.data.text;  
+
+    const subAccountsArray = this.state.account.subAccounts.map((item, i) => {
+      if (i === index) {
+        return id;
+      } else {
+        return item;
+      }
+    });  
+
+    this.setState(prevState => ({
+      account: {   
+        ...prevState.account,   
+        subAccounts: subAccountsArray
+      }
+      
+    }));  
+    
+    
+  }
+  
+  handleAddSubAccount(){
+
+    this.setState(prevState => ({
+      account: {   
+        ...prevState.account,   
+        subAccounts: [ ...prevState.account.subAccounts, ""]        
+      }
+      
+    }));  
+    
+  }
+  
+  
+  handleRemoveSubAccount(id){
+
+    let subAccountsArray = this.state.account.subAccounts;
+
+    subAccountsArray = subAccountsArray.filter((item, j) => id !== j);
+
+    this.setState(prevState => ({
+      account: {   
+        ...prevState.account,   
+        subAccounts: subAccountsArray
+      }
+      
+    }));   
+    
+  }
+
 
   handleSubmit(event) {        
     event.preventDefault();
@@ -1096,7 +1181,56 @@ class Profile extends React.Component {
                         </Row>
                       </div>
                       <hr className="my-4" />
+                     
+                      
+                      <h6 className="heading-small text-muted mt-2 mb-4">
+                        Subcontas
+                      </h6>
+                      <div className="pl-lg-4">                        
+                   
+                        {this.state.account.subAccounts.map((subAccount, idx) => (                                                                                  
+                          <Row className="mb-5">
+                            <Col md="12">
+                              <FormGroup>
+                                <label
+                                  className="form-control-label"
+                                  htmlFor="input-address"
+                                >
+                                  Subconta
+                                </label>
+                                <Select2
+                                  value={ subAccount }
+                                  className="form-control"
+                                  defaultValue="Nenhum" 
+                                  id={`select-subAccount${idx}`}
+                                  options={{
+                                    placeholder: "Nenhum",                                    
+                                  }}
+                                  data={this.state.accounts}
+                                  onSelect={event => this.handleChangeSubAccount(event, idx)}                                  
+                                />
+                              </FormGroup>
+                              <div style={{ textAlign: "left" }}>                                           
+                                {/* <Button color="danger" type="button" onClick={this.handleRemoveSubAccount(idx)}> */}
+                                <Button color="danger" type="button" onClick={ () => this.handleRemoveSubAccount(idx) } >
+                                  Remover conta
+                                </Button>                                  
+                              </div>
+                            </Col>                                                
+                          </Row>
+                        ))}
+       
+                          <div className="mt-3" style={{ textAlign: "right" }}>                                                                             
+                            <Button color="success" type="button" onClick={ () => this.handleAddSubAccount() } >  
+                              Adicionar conta
+                            </Button>
+                          </div>
 
+                      </div>
+                      
+                      <hr className="my-4" />
+                      
+                      
                       <h6 className="heading-small text-muted mb-4">
                         Informações de contato
                       </h6>
@@ -1270,6 +1404,46 @@ class Profile extends React.Component {
                                 type="text"
                                 name="ifood"
                                 value={this.state.account.ifood}
+                                onChange={this.handleChange}
+                              />
+                            </FormGroup>
+                          </Col>
+                        </Row>                        
+                        <Row>
+                          <Col md="12">
+                            <FormGroup>
+                              <label
+                                className="form-control-label"
+                                htmlFor="input-appAndroid"
+                              >
+                                Aplicativo Android
+                              </label>
+                              <Input                                
+                                id="input-appAndroid"
+                                placeholder="https://play.google.com/store/apps/"
+                                type="text"
+                                name="appAndroid"
+                                value={this.state.account.appAndroid}
+                                onChange={this.handleChange}
+                              />
+                            </FormGroup>
+                          </Col>
+                        </Row>                        
+                        <Row>
+                          <Col md="12">
+                            <FormGroup>
+                              <label
+                                className="form-control-label"
+                                htmlFor="input-appIos"
+                              >
+                                Aplicativo IOS
+                              </label>
+                              <Input                                
+                                id="input-appIos"
+                                placeholder="https://apps.apple.com/us/app/"
+                                type="text"
+                                name="appIos"
+                                value={this.state.account.appIos}
                                 onChange={this.handleChange}
                               />
                             </FormGroup>

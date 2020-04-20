@@ -33,6 +33,8 @@ import {
   Nav
 } from "reactstrap";
 
+import {BASE_URL} from "variables/general.jsx"
+
 class Sidebar extends React.Component {
   constructor(props) {
     super(props);
@@ -220,7 +222,7 @@ class Sidebar extends React.Component {
               </NavItem> */}
               <NavItem>
                 <NavLink
-                  href="https://wigoo-delivery.herokuapp.com/"
+                  href={BASE_URL}
                   target="_blank"
                 >
                   <i className="ni ni-palette" />

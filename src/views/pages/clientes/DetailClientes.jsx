@@ -104,7 +104,7 @@ class Profile extends React.Component {
         phone: "",
         emailPagseguro: "",
         units: "",        
-        subAccounts: ["5e1f0726d1c5be03151a5de5", "5e1f0726d1c5be03151a5de6"]     
+        subAccounts: []     
       }, 
       category: {
         id: "",

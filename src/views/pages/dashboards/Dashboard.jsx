@@ -90,7 +90,7 @@ class Dashboard extends React.Component {
                       <h6 className="text-light text-uppercase ls-1 mb-1">
                         Overview
                       </h6>
-                      <h5 className="h3 text-white mb-0">Sales value</h5>
+                      <h5 className="h3 text-white mb-0">Vendas</h5>
                     </div>
                     <div className="col">
                       <Nav className="justify-content-end" pills>
@@ -102,7 +102,7 @@ class Dashboard extends React.Component {
                             href="#pablo"
                             onClick={e => this.toggleNavs(e, 1)}
                           >
-                            <span className="d-none d-md-block">Month</span>
+                            <span className="d-none d-md-block">Mês</span>
                             <span className="d-md-none">M</span>
                           </NavLink>
                         </NavItem>
@@ -115,7 +115,7 @@ class Dashboard extends React.Component {
                             href="#pablo"
                             onClick={e => this.toggleNavs(e, 2)}
                           >
-                            <span className="d-none d-md-block">Week</span>
+                            <span className="d-none d-md-block">Semana</span>
                             <span className="d-md-none">W</span>
                           </NavLink>
                         </NavItem>
@@ -143,7 +143,7 @@ class Dashboard extends React.Component {
                       <h6 className="text-uppercase text-muted ls-1 mb-1">
                         Performance
                       </h6>
-                      <h5 className="h3 mb-0">Total orders</h5>
+                      <h5 className="h3 mb-0">Total de vouchers</h5>
                     </div>
                   </Row>
                 </CardHeader>

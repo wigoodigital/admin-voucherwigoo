@@ -69,16 +69,7 @@ class CardsHeader extends React.Component {
                     onClick={e => e.preventDefault()}
                     size="sm"
                   >
-                    New
-                  </Button>
-                  <Button
-                    className="btn-neutral"
-                    color="default"
-                    href="#pablo"
-                    onClick={e => e.preventDefault()}
-                    size="sm"
-                  >
-                    Filters
+                    Filtros
                   </Button>
                 </Col>
               </Row>
@@ -93,10 +84,10 @@ class CardsHeader extends React.Component {
                             tag="h5"
                             className="text-uppercase text-muted mb-0"
                           >
-                            Total traffic
+                            Total de acessos
                           </CardTitle>
                           <span className="h2 font-weight-bold mb-0">
-                            350,897
+                            350.897
                           </span>
                         </div>
                         <Col className="col-auto">
@@ -109,7 +100,7 @@ class CardsHeader extends React.Component {
                         <span className="text-success mr-2">
                           <i className="fa fa-arrow-up" /> 3.48%
                         </span>{" "}
-                        <span className="text-nowrap">Since last month</span>
+                        <span className="text-nowrap">Desde o último mês</span>
                       </p>
                     </CardBody>
                   </Card>
@@ -123,10 +114,10 @@ class CardsHeader extends React.Component {
                             tag="h5"
                             className="text-uppercase text-muted mb-0"
                           >
-                            New users
+                            Vouchers Gerados
                           </CardTitle>
                           <span className="h2 font-weight-bold mb-0">
-                            2,356
+                            2.356
                           </span>
                         </div>
                         <Col className="col-auto">
@@ -139,7 +130,7 @@ class CardsHeader extends React.Component {
                         <span className="text-success mr-2">
                           <i className="fa fa-arrow-up" /> 3.48%
                         </span>{" "}
-                        <span className="text-nowrap">Since last month</span>
+                        <span className="text-nowrap">Desde o último mês</span>
                       </p>
                     </CardBody>
                   </Card>
@@ -153,7 +144,7 @@ class CardsHeader extends React.Component {
                             tag="h5"
                             className="text-uppercase text-muted mb-0"
                           >
-                            Sales
+                            Vendas
                           </CardTitle>
                           <span className="h2 font-weight-bold mb-0">924</span>
                         </div>
@@ -167,7 +158,7 @@ class CardsHeader extends React.Component {
                         <span className="text-success mr-2">
                           <i className="fa fa-arrow-up" /> 3.48%
                         </span>{" "}
-                        <span className="text-nowrap">Since last month</span>
+                        <span className="text-nowrap">Desde o último mês</span>
                       </p>
                     </CardBody>
                   </Card>
@@ -197,7 +188,7 @@ class CardsHeader extends React.Component {
                         <span className="text-success mr-2">
                           <i className="fa fa-arrow-up" /> 3.48%
                         </span>{" "}
-                        <span className="text-nowrap">Since last month</span>
+                        <span className="text-nowrap">Desde o último mês</span>
                       </p>
                     </CardBody>
                   </Card>

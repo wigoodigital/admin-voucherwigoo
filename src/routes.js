@@ -22,39 +22,39 @@ import Cupons from "views/pages/campanhas/cupons/Cupons.jsx";
 import Pedidos from "views/pages/campanhas/cupons/Cupons.jsx";
 // import Pedidos from "views/pages/campanhas/pedidos/Pedidos.jsx";
 // import Eventos from "views/pages/campanhas/eventos/Eventos.jsx";
-// import Inicio from "views/pages/overview/Inicio.jsx";
+import Inicio from "views/pages/overview/Inicio.jsx";
 // import Campanhas from "views/pages/overview/Campanhas.jsx";
 // import Visitantes from "views/pages/overview/Visitantes.jsx";
 
 
 
 const routes = [
-  // {
-  //   collapse: true,
-  //   name: "Visão Geral",
-  //   icon: "ni ni-shop text-primary",
-  //   state: "dashboardsCollapse",
-  //   views: [
-  //     {
-  //       path: "/overview",
-  //       name: "Geral",
-  //       component: Inicio,
-  //       layout: "/admin"
-  //     },
-  //     {
-  //       path: "/overview/campanhas",
-  //       name: "Campanhas",
-  //       component: Campanhas,
-  //       layout: "/admin"
-  //     },
-  //     {
-  //       path: "/overview/visitantes",
-  //       name: "Visitantes",
-  //       component: Visitantes,
-  //       layout: "/admin"
-  //     }
-  //   ]
-  // },
+  {
+    collapse: true,
+    name: "Visão Geral",
+    icon: "ni ni-shop text-primary",
+    state: "dashboardsCollapse",
+    views: [
+      {
+        path: "/overview",
+        name: "Geral",
+        component: Inicio,
+        layout: "/admin"
+      },
+      // {
+      //   path: "/overview/campanhas",
+      //   name: "Campanhas",
+      //   component: Campanhas,
+      //   layout: "/admin"
+      // },
+      // {
+      //   path: "/overview/visitantes",
+      //   name: "Visitantes",
+      //   component: Visitantes,
+      //   layout: "/admin"
+      // }
+    ]
+  },
   {
     collapse: true,
     name: "Campanhas",

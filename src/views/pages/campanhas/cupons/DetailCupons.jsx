@@ -806,7 +806,8 @@ class Profile extends React.Component {
                         className="mr-4"
                         color="info"
                         type="button"
-                        href={`${BASE_URL}/${this.state.campaign.utm}`}    
+                        // href={`${BASE_URL}/${this.state.account.utm}/${this.state.campaign.utm}`}
+                        href={`${BASE_URL}/${this.state.campaign.utm}`}
                         target="_blank"                    
                         size="sm"
                       >

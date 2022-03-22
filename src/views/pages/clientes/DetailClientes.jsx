@@ -1036,7 +1036,8 @@ class Profile extends React.Component {
                                     { id: "3", text: "Vestuário" },
                                     { id: "4", text: "Serviços" },
                                     { id: "5", text: "Cursos" },
-                                    { id: "6", text: "Clínica" }
+                                    { id: "6", text: "Clínica" },
+                                    { id: "7", text: "Entrega" },
                                   ]}
                                   onSelect={event => this.handleSelect(event)}                                  
                                 />
